@@ -231,3 +231,50 @@ docker compose up --build
 ## 다음 단계 제안
 - Grafana 기본 대시보드 추가
 - 실서비스 업스트림(vLLM) 연동 예시 제공
+
+---
+
+# 작업 기록: Grafana 기본 대시보드 추가
+
+## 작업 목적
+- Prometheus 메트릭을 시각화할 수 있도록 Grafana 대시보드를 자동 프로비저닝으로 추가했습니다.
+
+## 구현 범위 요약
+- Grafana 대시보드 프로비저닝 설정 추가
+- Nexus Gateway 기본 대시보드 JSON 생성
+- 데이터소스 UID 고정하여 대시보드 연결 안정화
+- 문서에 대시보드 위치 안내 추가
+
+## 변경 파일
+- `ops/grafana/provisioning/dashboards/dashboards.yml`
+  - 대시보드 자동 로드 설정
+- `ops/grafana/provisioning/dashboards/nexus-gateway.json`
+  - Nexus Gateway 기본 대시보드 정의
+- `ops/grafana/provisioning/datasources/datasource.yml`
+  - Prometheus 데이터소스 UID 지정
+- `gateway/README.md`
+  - Grafana 대시보드 안내 추가
+
+## 대시보드 구성
+- Requests per second
+- 5xx error rate
+- Request latency p95
+- Upstream latency p95
+- Upstream errors
+- Rate limited requests
+- Circuit open
+- Fallback usage
+- In-flight requests
+
+## 실행 방법
+```bash
+docker compose up --build
+```
+
+## 접속
+- Grafana: http://localhost:3000 (admin / admin)
+- 대시보드: "Nexus Gateway" (자동 등록)
+
+## 다음 단계 제안
+- 대시보드 알람 룰 추가
+- 서비스/테넌트별 라벨 확장

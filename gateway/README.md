@@ -21,6 +21,7 @@ docker compose up --build
 - Metrics: http://localhost:8000/metrics
 - Prometheus: http://localhost:9090
 - Grafana: http://localhost:3000 (default: admin / admin)
+  - Dashboard: Nexus Gateway (auto-provisioned)
 
 ## Configuration
 
