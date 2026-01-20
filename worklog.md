@@ -278,3 +278,54 @@ docker compose up --build
 ## 다음 단계 제안
 - 대시보드 알람 룰 추가
 - 서비스/테넌트별 라벨 확장
+
+---
+
+# 작업 기록: vLLM 연결 가이드 및 Compose 추가
+
+## 작업 목적
+- 모델 서빙 엔진 단계의 시작으로 vLLM 실행/연결 방법을 문서화하고, Docker Compose로 연동할 수 있도록 구성했습니다.
+
+## 구현 범위 요약
+- vLLM 실행 가이드 및 로컬 스크립트 추가
+- vLLM 포함 Compose override 파일 추가
+- Gateway 문서에 vLLM Compose 실행 방법 추가
+
+## 변경 파일
+- `serving/vllm/README.md`
+  - vLLM 로컬/도커 실행 및 Gateway 연동 예시
+- `serving/vllm/run_local.sh`
+  - vLLM OpenAI API 서버 실행 스크립트
+- `docker-compose.vllm.yml`
+  - vLLM 서비스와 Gateway 연동용 Compose override
+- `gateway/README.md`
+  - vLLM Compose 실행 방법 추가
+
+## 실행 방법
+```bash
+MODEL_ID=meta-llama/Meta-Llama-3-8B-Instruct \
+  docker compose -f docker-compose.yml -f docker-compose.vllm.yml up --build
+```
+
+## 현재 제약/가정
+- GPU가 있는 환경과 NVIDIA container runtime이 필요합니다.
+- 모델 가중치 다운로드에 시간이 걸릴 수 있습니다.
+
+## 다음 단계 제안
+- vLLM/SGLang/Triton 성능 비교 스크립트 추가
+- K8s 배포 매니페스트 초안 작성
+
+---
+
+# 작업 기록: vLLM Healthcheck 추가
+
+## 작업 목적
+- vLLM 서비스가 준비되었는지 확인할 수 있도록 Docker Compose에 healthcheck를 추가했습니다.
+
+## 변경 파일
+- `docker-compose.vllm.yml`
+  - `/v1/models` 엔드포인트로 상태 확인 healthcheck 추가
+
+## 동작 방식
+- 컨테이너 내부에서 `python -c`로 `/v1/models` 호출
+- 호출이 성공하면 healthy, 실패하면 unhealthy로 표시

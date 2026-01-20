@@ -23,6 +23,15 @@ docker compose up --build
 - Grafana: http://localhost:3000 (default: admin / admin)
   - Dashboard: Nexus Gateway (auto-provisioned)
 
+## Docker with vLLM upstream
+
+This requires a GPU host with the NVIDIA container runtime.
+
+```bash
+MODEL_ID=meta-llama/Meta-Llama-3-8B-Instruct \\
+  docker compose -f docker-compose.yml -f docker-compose.vllm.yml up --build
+```
+
 ## Configuration
 
 All settings use the `GATEWAY_` prefix.
