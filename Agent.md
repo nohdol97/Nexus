@@ -34,3 +34,7 @@ These rules guide all implementation work in this repo.
 ## Process
 - Update `plan.md` when architecture or milestones change.
 - Add tests for routing, fallback, and critical workflows.
+
+## Linting
+- Keep lint clean during development; fix issues before committing.
+- If a lint command exists (e.g. `npm run lint`), run it when asked and report failures.

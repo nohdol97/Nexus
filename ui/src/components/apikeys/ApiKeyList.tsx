@@ -14,7 +14,7 @@ interface ApiKey {
 }
 
 export function ApiKeyList() {
-    const [keys, setKeys] = useState<ApiKey[]>([
+    const [keys] = useState<ApiKey[]>([
         {
             id: "1",
             name: "Production Key",
