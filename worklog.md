@@ -187,3 +187,47 @@
 - 구조화 로그에 사용자/모델별 샘플링 정책 추가
 - Prometheus/Grafana 대시보드 스케치 작성
 - Docker/compose 구성 및 관측 스택 연결
+
+---
+
+# 작업 기록: Gateway Docker/Compose 구성
+
+## 작업 목적
+- 로컬에서 Gateway + Prometheus + Grafana를 빠르게 실행할 수 있도록 Docker/Compose 구성을 추가했습니다.
+
+## 구현 범위 요약
+- Gateway 컨테이너 이미지용 Dockerfile 추가
+- Prometheus/Grafana와 함께 실행하는 docker-compose 구성
+- Prometheus 스크랩 설정 및 Grafana 데이터소스 자동 프로비저닝
+- 실행 방법 문서화
+
+## 변경 파일
+- `gateway/Dockerfile`
+  - Gateway 컨테이너 이미지 빌드 정의
+- `docker-compose.yml`
+  - Gateway/Prometheus/Grafana 스택 구성
+- `ops/prometheus.yml`
+  - Gateway `/metrics` 스크랩 설정
+- `ops/grafana/provisioning/datasources/datasource.yml`
+  - Grafana에서 Prometheus 데이터소스 자동 등록
+- `gateway/README.md`
+  - Docker quick start 섹션 추가
+
+## 실행 방법
+```bash
+docker compose up --build
+```
+
+## 접속 주소
+- Gateway: http://localhost:8000
+- Metrics: http://localhost:8000/metrics
+- Prometheus: http://localhost:9090
+- Grafana: http://localhost:3000 (admin / admin)
+
+## 현재 제약/가정
+- 기본 업스트림은 `mock://`로 설정되어 있습니다.
+- Grafana 대시보드는 아직 제공되지 않으며 데이터소스만 자동 등록됩니다.
+
+## 다음 단계 제안
+- Grafana 기본 대시보드 추가
+- 실서비스 업스트림(vLLM) 연동 예시 제공

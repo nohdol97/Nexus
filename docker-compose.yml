@@ -1,0 +1,28 @@
+services:
+  gateway:
+    build:
+      context: ./gateway
+    ports:
+      - "8000:8000"
+    environment:
+      GATEWAY_API_KEYS: "dev-key"
+      GATEWAY_UPSTREAMS: "mock=mock://local"
+      GATEWAY_DEFAULT_UPSTREAM: "mock"
+    depends_on:
+      - prometheus
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./ops/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./ops/grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus

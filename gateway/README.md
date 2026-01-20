@@ -11,6 +11,17 @@ pip install -e .
 uvicorn app.main:app --reload
 ```
 
+## Docker quick start
+
+```bash
+docker compose up --build
+```
+
+- Gateway: http://localhost:8000
+- Metrics: http://localhost:8000/metrics
+- Prometheus: http://localhost:9090
+- Grafana: http://localhost:3000 (default: admin / admin)
+
 ## Configuration
 
 All settings use the `GATEWAY_` prefix.
