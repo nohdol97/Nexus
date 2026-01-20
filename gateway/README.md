@@ -20,8 +20,24 @@ All settings use the `GATEWAY_` prefix.
 - `GATEWAY_CIRCUIT_BREAKER_MAX_FAILURES` (default: `5`)
 - `GATEWAY_CIRCUIT_BREAKER_RESET_SECONDS` (default: `30`)
 - `GATEWAY_REQUEST_TIMEOUT_SECONDS` (default: `10`)
-- `GATEWAY_UPSTREAMS` (example: `llama=http://localhost:8001;mock=mock://local`)
+- `GATEWAY_UPSTREAMS` (example: `llama=http://localhost:8001;mock=mock://local;gpt-4o-mini=litellm://gpt-4o-mini`)
 - `GATEWAY_DEFAULT_UPSTREAM` (optional upstream name)
+- `GATEWAY_FALLBACKS` (example: `llama=gpt-4o-mini,mock`)
+
+## LiteLLM upstreams
+
+Use `litellm://` to route to external providers via LiteLLM. The model name can be part of the URL:
+
+```
+GATEWAY_UPSTREAMS="gpt-4o-mini=litellm://gpt-4o-mini"
+```
+
+Fallback example:
+
+```
+GATEWAY_UPSTREAMS="llama=http://localhost:8001;gpt-4o-mini=litellm://gpt-4o-mini"
+GATEWAY_FALLBACKS="llama=gpt-4o-mini"
+```
 
 ## Example request
 

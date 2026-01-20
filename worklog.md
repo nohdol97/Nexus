@@ -75,3 +75,57 @@
 - LiteLLM 라우팅/Failover 정책 구현
 - Prometheus 메트릭 + 구조화 로그 추가
 - Dockerfile/compose로 실행 환경 구성
+
+---
+
+# 작업 기록: LiteLLM 라우팅 및 Fallback 추가
+
+## 작업 목적
+- 다음 단계(멀티 모델 라우팅 및 Fallback 정책 구현)를 완료하기 위해 LiteLLM 업스트림과 실패 시 대체 모델로 전환되는 Fallback 로직을 추가했습니다.
+
+## 구현 범위 요약
+- LiteLLM 업스트림 지원(`litellm://` 스킴)
+- 모델별 Fallback 체인 설정(`GATEWAY_FALLBACKS`)
+- 실패 시 자동 전환 및 헤더 노출(`x-fallback-model`)
+- 문서/테스트 업데이트
+
+## 변경 파일
+- `gateway/app/core/config.py`
+  - `GATEWAY_FALLBACKS` 파싱 로직 추가
+- `gateway/app/main.py`
+  - Fallback 후보 리스트 구성 및 순차 시도
+  - 실패 누적 시 에러 메시지 집계
+  - fallback 사용 시 `x-fallback-model` 헤더 추가
+- `gateway/app/services/proxy.py`
+  - `litellm://` 스킴 지원
+  - `mock://fail`로 강제 실패 시뮬레이션
+- `gateway/pyproject.toml`
+  - `litellm` 의존성 추가
+- `gateway/tests/test_gateway.py`
+  - 실패 시 fallback 정상 동작 확인 테스트 추가
+- `gateway/README.md`
+  - LiteLLM 업스트림 및 fallback 설정 예시 추가
+
+## 동작 방식 상세
+1) 요청 모델명을 기준으로 fallback 후보 리스트를 생성합니다.
+2) 후보 순서대로 업스트림을 선택하고 Circuit Breaker 상태를 확인합니다.
+3) 업스트림 호출 실패 시 다음 후보로 자동 전환합니다.
+4) 대체 모델이 사용되면 `x-fallback-model` 헤더를 내려줍니다.
+5) 모든 후보 실패 시 502 반환, 업스트림이 설정되지 않았을 경우 404 반환합니다.
+
+## 환경변수 추가
+- `GATEWAY_FALLBACKS`
+  - 예: `llama=gpt-4o-mini,mock`
+
+## 테스트 결과
+- `gateway` 디렉터리에서 `pytest` 실행
+- 결과: 3 tests passed
+
+## 현재 제약/가정
+- LiteLLM 호출은 라이브러리 설치 및 외부 API 키 설정이 필요합니다.
+- Fallback 체인은 단순 순차 시도 방식이며, 라우팅 정책(AB/가중치)은 포함하지 않았습니다.
+
+## 다음 단계 제안
+- Prometheus 메트릭과 구조화 로그 추가
+- Gateway Dockerfile/compose 구성
+- UI ↔ Gateway 연결(서버 라우트 경유)

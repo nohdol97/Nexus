@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     request_timeout_seconds: float = 10.0
     upstreams: str = ""
     default_upstream: str | None = None
+    fallbacks: str = ""
 
     def upstream_map(self) -> dict[str, str]:
         if not self.upstreams:
@@ -33,6 +34,21 @@ class Settings(BaseSettings):
             name, url = entry.split("=", 1)
             items[name.strip()] = url.strip()
         return items
+
+    def fallback_map(self) -> dict[str, list[str]]:
+        if not self.fallbacks:
+            return {}
+        mapping: dict[str, list[str]] = {}
+        raw_entries = [entry.strip() for entry in self.fallbacks.split(";")]
+        for entry in raw_entries:
+            if not entry:
+                continue
+            if "=" not in entry:
+                raise ValueError(f"Invalid fallback entry: {entry}")
+            name, values = entry.split("=", 1)
+            fallbacks = [value.strip() for value in values.split(",") if value.strip()]
+            mapping[name.strip()] = fallbacks
+        return mapping
 
 
 settings = Settings()

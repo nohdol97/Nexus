@@ -83,42 +83,66 @@ async def chat_completions(
     response.headers["x-ratelimit-remaining"] = str(snapshot.remaining)
     response.headers["x-ratelimit-reset"] = str(snapshot.reset_seconds)
 
-    upstream = route_selector.select(payload.model)
-    if upstream is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No upstream configured for requested model",
-        )
-
-    breaker = circuit_breakers.setdefault(
-        upstream.name,
-        CircuitBreaker(
-            max_failures=settings.circuit_breaker_max_failures,
-            reset_timeout_seconds=settings.circuit_breaker_reset_seconds,
-        ),
-    )
-
-    if not breaker.allow_request():
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Upstream circuit open",
-        )
-
     proxy: ProxyClient = request.app.state.proxy
     forward_headers = {
         "x-request-id": request.state.request_id,
         "x-trace-id": request.state.trace_id,
     }
+    fallback_map = settings.fallback_map()
+    candidates = [payload.model] + fallback_map.get(payload.model, [])
+    errors: list[str] = []
+    seen: set[str] = set()
 
-    try:
-        result = await proxy.forward(upstream, "/v1/chat/completions", payload, forward_headers)
-    except UpstreamError as exc:
-        breaker.record_failure()
+    for model_name in candidates:
+        if model_name in seen:
+            continue
+        seen.add(model_name)
+
+        upstream = route_selector.select(model_name)
+        if upstream is None:
+            errors.append(f"{model_name}: no upstream")
+            continue
+
+        breaker = circuit_breakers.setdefault(
+            upstream.name,
+            CircuitBreaker(
+                max_failures=settings.circuit_breaker_max_failures,
+                reset_timeout_seconds=settings.circuit_breaker_reset_seconds,
+            ),
+        )
+
+        if not breaker.allow_request():
+            errors.append(f"{model_name}: circuit open")
+            continue
+
+        candidate_payload = payload
+        if model_name != payload.model:
+            candidate_payload = payload.model_copy(update={"model": model_name})
+
+        try:
+            result = await proxy.forward(
+                upstream,
+                "/v1/chat/completions",
+                candidate_payload,
+                forward_headers,
+            )
+        except UpstreamError as exc:
+            breaker.record_failure()
+            errors.append(f"{model_name}: {exc}")
+            continue
+
+        breaker.record_success()
+        response.headers["x-upstream"] = upstream.name
+        if model_name != payload.model:
+            response.headers["x-fallback-model"] = model_name
+        return result
+
+    if errors and all("no upstream" in error for error in errors):
         raise HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=str(exc),
-        ) from exc
-
-    breaker.record_success()
-    response.headers["x-upstream"] = upstream.name
-    return result
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No upstream configured for requested model",
+        )
+    raise HTTPException(
+        status_code=status.HTTP_502_BAD_GATEWAY,
+        detail="; ".join(errors) if errors else "Upstream unavailable",
+    )

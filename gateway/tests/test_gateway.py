@@ -7,24 +7,26 @@ from app.core.rate_limiter import RateLimiter
 from app.services.router import RouteSelector
 
 
-def _configure_mock() -> None:
-    settings.upstreams = "mock=mock://local"
-    settings.default_upstream = "mock"
+def _reset_state() -> None:
     main.route_selector = RouteSelector()
     main.rate_limiter = RateLimiter(
         max_requests=settings.rate_limit_per_minute,
         window_seconds=settings.rate_limit_window_seconds,
     )
     main.circuit_breakers = {
-        "mock": CircuitBreaker(
+        upstream.name: CircuitBreaker(
             max_failures=settings.circuit_breaker_max_failures,
             reset_timeout_seconds=settings.circuit_breaker_reset_seconds,
         )
+        for upstream in main.route_selector.all()
     }
 
 
 def test_missing_api_key() -> None:
-    _configure_mock()
+    settings.upstreams = "mock=mock://local"
+    settings.default_upstream = "mock"
+    settings.fallbacks = ""
+    _reset_state()
     with TestClient(main.app) as client:
         response = client.post(
             "/v1/chat/completions",
@@ -34,7 +36,10 @@ def test_missing_api_key() -> None:
 
 
 def test_chat_completion_mock() -> None:
-    _configure_mock()
+    settings.upstreams = "mock=mock://local"
+    settings.default_upstream = "mock"
+    settings.fallbacks = ""
+    _reset_state()
     with TestClient(main.app) as client:
         response = client.post(
             "/v1/chat/completions",
@@ -45,3 +50,19 @@ def test_chat_completion_mock() -> None:
     payload = response.json()
     assert payload["model"] == "mock"
     assert payload["choices"][0]["message"]["role"] == "assistant"
+
+
+def test_fallback_on_failure() -> None:
+    settings.upstreams = "primary=mock://fail;fallback=mock://local"
+    settings.default_upstream = None
+    settings.fallbacks = "primary=fallback"
+    _reset_state()
+    with TestClient(main.app) as client:
+        response = client.post(
+            "/v1/chat/completions",
+            json={"model": "primary", "messages": [{"role": "user", "content": "hi"}]},
+            headers={"X-API-Key": "dev-key"},
+        )
+    assert response.status_code == 200
+    assert response.headers.get("x-upstream") == "fallback"
+    assert response.headers.get("x-fallback-model") == "fallback"
