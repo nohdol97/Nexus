@@ -23,7 +23,13 @@ from app.core.metrics import (
     UPSTREAM_LATENCY,
     UPSTREAM_REQUESTS,
 )
-from app.core.rate_limiter import RateLimitExceeded, RateLimiter
+from app.core.rate_limiter import (
+    RateLimitBackendError,
+    RateLimitExceeded,
+    RateLimiter,
+    RateLimiterBase,
+    RedisRateLimiter,
+)
 from app.core.security import require_api_key
 from app.schemas import ChatCompletionRequest
 from app.services.proxy import ProxyClient, UpstreamError
@@ -38,14 +44,25 @@ async def lifespan(app: FastAPI):
         yield
     finally:
         await app.state.proxy.close()
+        await rate_limiter.close()
 
 
 app = FastAPI(title="Nexus Gateway", version="0.1.0", lifespan=lifespan)
 
-rate_limiter = RateLimiter(
-    max_requests=settings.rate_limit_per_minute,
-    window_seconds=settings.rate_limit_window_seconds,
-)
+def _build_rate_limiter() -> RateLimiterBase:
+    if settings.redis_url:
+        return RedisRateLimiter(
+            redis_url=settings.redis_url,
+            max_requests=settings.rate_limit_per_minute,
+            window_seconds=settings.rate_limit_window_seconds,
+        )
+    return RateLimiter(
+        max_requests=settings.rate_limit_per_minute,
+        window_seconds=settings.rate_limit_window_seconds,
+    )
+
+
+rate_limiter = _build_rate_limiter()
 route_selector = RouteSelector()
 
 circuit_breakers: dict[str, CircuitBreaker] = {
@@ -133,9 +150,21 @@ async def chat_completions(
     response: Response,
     api_key: str = Depends(require_api_key),
 ) -> dict[str, Any]:
-    snapshot = rate_limiter.check(api_key)
-    response.headers["x-ratelimit-remaining"] = str(snapshot.remaining)
-    response.headers["x-ratelimit-reset"] = str(snapshot.reset_seconds)
+    try:
+        snapshot = await rate_limiter.check(api_key)
+    except RateLimitBackendError as exc:
+        logger.warning(
+            "rate_limit_backend_error",
+            extra={
+                "event": "rate_limit_backend_error",
+                "error": str(exc),
+                "request_id": request.state.request_id,
+                "trace_id": request.state.trace_id,
+            },
+        )
+    else:
+        response.headers["x-ratelimit-remaining"] = str(snapshot.remaining)
+        response.headers["x-ratelimit-reset"] = str(snapshot.reset_seconds)
 
     proxy: ProxyClient = request.app.state.proxy
     forward_headers = {

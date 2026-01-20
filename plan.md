@@ -26,7 +26,7 @@
 
 ### 1단계: 모델 서빙 엔진 구축 (Core Engine)
 가장 먼저 AI 모델이 실제로 구동되는 '엔진' 부분을 구축합니다.
-- **기술 스택**: [[Python]], [[vLLM]], [[SGLang]], [[Triton]]
+- **기술 스택**: [[Python]], [[vLLM]], [[SGLang]], [[Triton]] <- GPU 환경 필요
 - **주요 구현**:
 	- [[Llama 3]] 또는 Mistral 오픈소스 모델을 vLLM 엔진으로 실행
 	- 분산 서빙(Distributed Serving) 환경 구성을 통한 확장성 확보

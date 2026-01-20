@@ -44,6 +44,7 @@ All settings use the `GATEWAY_` prefix.
 - `GATEWAY_UPSTREAMS` (example: `llama=http://localhost:8001;mock=mock://local;gpt-4o-mini=litellm://gpt-4o-mini`)
 - `GATEWAY_DEFAULT_UPSTREAM` (optional upstream name)
 - `GATEWAY_FALLBACKS` (example: `llama=gpt-4o-mini,mock`)
+- `GATEWAY_REDIS_URL` (optional; enables Redis-backed rate limiting)
 
 ## Observability
 

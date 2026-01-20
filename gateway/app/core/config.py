@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     upstreams: str = ""
     default_upstream: str | None = None
     fallbacks: str = ""
+    redis_url: str | None = None
 
     def upstream_map(self) -> dict[str, str]:
         if not self.upstreams:

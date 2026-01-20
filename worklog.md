@@ -329,3 +329,34 @@ MODEL_ID=meta-llama/Meta-Llama-3-8B-Instruct \
 ## 동작 방식
 - 컨테이너 내부에서 `python -c`로 `/v1/models` 호출
 - 호출이 성공하면 healthy, 실패하면 unhealthy로 표시
+
+---
+
+# 작업 기록: Redis 기반 Rate Limiting 도입
+
+## 작업 목적
+- Gateway의 Rate Limit을 분산 환경에서도 동작하도록 Redis 백엔드를 추가했습니다.
+
+## 구현 범위 요약
+- In-memory RateLimiter를 async로 변경
+- Redis 기반 RateLimiter 추가
+- Redis 장애 시 fail-open 로그 처리
+- 설정/문서 업데이트
+
+## 변경 파일
+- `gateway/app/core/rate_limiter.py`
+  - RedisRateLimiter 및 RateLimitBackendError 추가
+  - 기존 RateLimiter를 async로 변경
+- `gateway/app/core/config.py`
+  - `GATEWAY_REDIS_URL` 설정 추가
+- `gateway/app/main.py`
+  - Redis 사용 여부에 따라 rate limiter 생성
+  - rate limit backend 오류 로그 처리
+- `gateway/README.md`
+  - Redis 설정 문서화
+
+## 설정 값
+- `GATEWAY_REDIS_URL` (예: `redis://localhost:6379/0`)
+
+## 현재 제약/가정
+- Redis 연결 실패 시 요청은 허용되며 로그에 오류가 남습니다.
