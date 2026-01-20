@@ -129,3 +129,61 @@
 - Prometheus 메트릭과 구조화 로그 추가
 - Gateway Dockerfile/compose 구성
 - UI ↔ Gateway 연결(서버 라우트 경유)
+
+---
+
+# 작업 기록: Prometheus 메트릭과 구조화 로그 추가
+
+## 작업 목적
+- 게이트웨이의 관측성을 높이기 위해 Prometheus 메트릭과 JSON 구조화 로그를 추가했습니다.
+
+## 구현 범위 요약
+- `/metrics` 엔드포인트 추가(Prometheus 형식)
+- HTTP 요청/업스트림 호출에 대한 메트릭 수집
+- JSON 구조화 로그 출력(요청/응답, 에러)
+- 관련 테스트 및 문서 업데이트
+
+## 변경 파일
+- `gateway/app/core/metrics.py`
+  - 요청/업스트림/Rate Limit/Circuit/Fallback 메트릭 정의
+- `gateway/app/core/logging.py`
+  - JSON 로그 포맷터 및 로거 설정
+- `gateway/app/main.py`
+  - 요청 미들웨어에서 메트릭/로그 수집
+  - `/metrics` 엔드포인트 추가
+  - 업스트림 성공/실패, fallback 사용 시 메트릭 기록
+- `gateway/tests/test_gateway.py`
+  - `/metrics` 응답 테스트 추가
+- `gateway/README.md`
+  - Observability 섹션 추가
+- `gateway/pyproject.toml`
+  - `prometheus-client` 의존성 추가
+
+## 수집 메트릭 목록
+- `gateway_requests_total` (method/path/status)
+- `gateway_request_latency_seconds` (method/path)
+- `gateway_in_flight_requests`
+- `gateway_upstream_requests_total` (upstream/status)
+- `gateway_upstream_latency_seconds` (upstream)
+- `gateway_rate_limited_total`
+- `gateway_circuit_open_total` (upstream)
+- `gateway_fallback_used_total` (from_model/to_model)
+
+## 로그 출력 필드(주요)
+- `timestamp`, `level`, `message`, `logger`
+- `request_id`, `trace_id`, `method`, `path`, `status`, `duration_ms`
+- `upstream`, `fallback_model`, `client_ip`
+- 에러 발생 시 `exc_info`
+
+## 테스트 결과
+- `gateway` 디렉터리에서 `pytest` 실행
+- 결과: 4 tests passed
+
+## 현재 제약/가정
+- 메트릭은 단일 프로세스 기준으로 수집됩니다(멀티 프로세스 환경은 별도 구성 필요).
+- 로그는 표준 출력(JSON)으로만 제공합니다.
+
+## 다음 단계 제안
+- 구조화 로그에 사용자/모델별 샘플링 정책 추가
+- Prometheus/Grafana 대시보드 스케치 작성
+- Docker/compose 구성 및 관측 스택 연결

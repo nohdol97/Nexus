@@ -24,6 +24,11 @@ All settings use the `GATEWAY_` prefix.
 - `GATEWAY_DEFAULT_UPSTREAM` (optional upstream name)
 - `GATEWAY_FALLBACKS` (example: `llama=gpt-4o-mini,mock`)
 
+## Observability
+
+- Metrics: `GET /metrics` (Prometheus format)
+- Logs: JSON structured logs on stdout
+
 ## LiteLLM upstreams
 
 Use `litellm://` to route to external providers via LiteLLM. The model name can be part of the URL:

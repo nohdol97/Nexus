@@ -66,3 +66,14 @@ def test_fallback_on_failure() -> None:
     assert response.status_code == 200
     assert response.headers.get("x-upstream") == "fallback"
     assert response.headers.get("x-fallback-model") == "fallback"
+
+
+def test_metrics_endpoint() -> None:
+    settings.upstreams = "mock=mock://local"
+    settings.default_upstream = "mock"
+    settings.fallbacks = ""
+    _reset_state()
+    with TestClient(main.app) as client:
+        response = client.get("/metrics")
+    assert response.status_code == 200
+    assert "gateway_requests_total" in response.text
