@@ -579,3 +579,24 @@ kubectl apply -k k8s/
 ## 다음 단계 제안
 - Gateway 이미지 빌드/푸시 파이프라인 추가
 - 모델 워커(vLLM/SGLang/Triton) K8s 매니페스트 확장
+
+---
+
+# 작업 기록: Gateway 이미지 빌드/푸시 스크립트 추가
+
+## 작업 목적
+- Kubernetes 배포를 위해 Gateway 이미지를 레지스트리에 빌드/푸시하고, 배포 이미지 업데이트를 쉽게 하도록 스크립트를 추가했습니다.
+
+## 변경 파일
+- `ops/build_push_gateway.sh`
+  - Gateway 이미지 빌드 및 레지스트리 푸시
+- `ops/k8s_set_gateway_image.sh`
+  - K8s deployment 이미지 업데이트
+- `k8s/README.md`
+  - 빌드/푸시/업데이트 방법 문서화
+
+## 사용 방법
+```bash
+IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/build_push_gateway.sh
+IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway_image.sh
+```
