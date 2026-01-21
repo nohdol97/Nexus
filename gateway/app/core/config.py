@@ -5,14 +5,10 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-def _default_api_keys() -> set[str]:
-    return {"dev-key"}
-
-
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="GATEWAY_", case_sensitive=False)
 
-    api_keys: set[str] = Field(default_factory=_default_api_keys)
+    api_keys: str = "dev-key"
     rate_limit_per_minute: int = 60
     rate_limit_window_seconds: int = 60
     circuit_breaker_max_failures: int = 5
@@ -29,6 +25,23 @@ class Settings(BaseSettings):
     jwt_algorithms: str = "HS256"
     jwt_issuer: str | None = None
     jwt_audience: str | None = None
+
+    def api_key_set(self) -> set[str]:
+        if not self.api_keys:
+            return set()
+        cleaned = self.api_keys.strip()
+        if not cleaned:
+            return set()
+        if cleaned.startswith("["):
+            try:
+                parsed = json.loads(cleaned)
+            except json.JSONDecodeError:
+                parsed = None
+            else:
+                if isinstance(parsed, list):
+                    return {str(item).strip() for item in parsed if str(item).strip()}
+        parts = [part.strip() for part in cleaned.replace(";", ",").split(",") if part.strip()]
+        return set(parts)
 
     def upstream_map(self) -> dict[str, str]:
         if not self.upstreams:

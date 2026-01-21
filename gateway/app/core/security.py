@@ -122,7 +122,7 @@ def require_auth(
         )
 
     policy_map = settings.api_key_policy_map()
-    if key not in settings.api_keys and key not in policy_map:
+    if key not in settings.api_key_set() and key not in policy_map:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Invalid API key",

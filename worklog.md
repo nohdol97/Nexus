@@ -118,6 +118,14 @@
   - **왜 필요?** 환경별 설정을 관리하기 위해.
   - **어디에?** `k8s/kustomization.yaml`, `kubectl apply -k k8s/`.
 
+- **kind**: 로컬 PC에서 Kubernetes 클러스터를 빠르게 띄우는 도구.
+  - **왜 필요?** 실제 클라우드 없이도 K8s 배포/검증을 하기 위해.
+  - **어디에?** `kind create cluster` 로 실행.
+
+- **Ingress Controller**: Ingress 규칙을 실제로 처리해 주는 “입구 관리자”.
+  - **왜 필요?** Ingress만 만들면 동작하지 않고, 이를 처리할 컨트롤러가 꼭 필요.
+  - **어디에?** kind 환경에서는 `ingress-nginx` 설치로 활성화.
+
 - **Node(노드)**: Kubernetes에서 실제로 컨테이너가 실행되는 서버(머신).
   - **왜 필요?** Pod가 배치되는 실제 실행 공간.
   - **어디에?** 클러스터의 워커 노드.
@@ -624,3 +632,27 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 주의사항
 - 둘 중 하나만 쓰려면 `k8s/kustomization.yaml`에서 다른 리소스를 제거하세요.
+
+---
+
+# 작업 기록: kind 로컬 K8s 검증 및 API Key 파싱 개선
+
+## 작업 목적
+- Mac 환경에서 로컬 K8s(kind)로 배포가 실제로 동작하는지 확인했습니다.
+- `GATEWAY_API_KEYS` 환경변수가 단순 문자열일 때도 정상 동작하도록 파싱 방식을 개선했습니다.
+
+## 변경 내용
+- Gateway 설정에서 API Key를 문자열/콤마 구분으로 받아도 동작하도록 파싱 로직을 수정.
+
+## 확인 방법(실행)
+- kind 클러스터 생성 후 `kubectl apply -k k8s/`로 배포.
+- Ingress 사용을 위해 `ingress-nginx` 컨트롤러 설치.
+- Port-forward로 `/health` 응답 확인:
+  - `kubectl port-forward -n nexus svc/nexus-gateway 8000:80`
+  - `curl http://localhost:8000/health`
+  - `kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80`
+  - `curl -H 'Host: gateway.local' http://localhost:8080/health`
+
+## 결과
+- `/health`가 정상 응답해 Gateway가 실행 중임을 확인.
+- kind 환경에서는 LoadBalancer가 `<pending>` 상태이므로, Ingress/Port-forward 방식으로 검증함.
