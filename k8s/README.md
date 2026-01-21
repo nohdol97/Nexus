@@ -29,6 +29,22 @@ Optional SGLang worker (GPU):
 kubectl apply -k k8s/overlays/gpu/sglang
 ```
 
+## Gateway routing example (vLLM + SGLang)
+
+If you enable both workers, add them to `GATEWAY_UPSTREAMS` and set a routing policy
+for the model ID you serve (example below uses Llama 3):
+
+```yaml
+GATEWAY_UPSTREAMS: "vllm=http://model-worker:8001;sglang=http://sglang-worker:8002"
+GATEWAY_DEFAULT_UPSTREAM: "vllm"
+GATEWAY_ROUTE_POLICIES: |
+  {"meta-llama/Meta-Llama-3-8B-Instruct":
+    {"strategy":"canary","primary":"vllm","canary":"sglang","percent":10}
+  }
+```
+
+Note: The policy key must match the `model` string in the request payload.
+
 ## Local kind cluster (Mac/Windows/Linux)
 
 kind is a local Kubernetes cluster for quick verification.

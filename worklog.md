@@ -772,6 +772,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ---
 
+# 작업 기록: vLLM + SGLang 라우팅 예시 추가
+
+## 작업 목적
+- 두 엔진을 함께 사용할 때 Gateway 라우팅 정책 예시를 제공했습니다.
+
+## 변경 파일
+- `k8s/README.md`
+
+## 요약
+- `GATEWAY_UPSTREAMS`와 `GATEWAY_ROUTE_POLICIES` 예시를 추가.
+- 요청의 `model` 값과 정책 키가 동일해야 함을 명시.
+
+---
+
 # 작업 기록: 모델 워커 HPA 추가
 
 ## 작업 목적
