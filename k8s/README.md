@@ -143,6 +143,11 @@ docker build -t nexus-model-worker:latest -f serving/mock-worker/Dockerfile serv
 - Optional token in `k8s/overlays/gpu/model-worker-secret.yaml`
   - `HF_TOKEN` is a Hugging Face access token for gated/private models
 
+## KServe/BentoML scaffolding
+
+- KServe template: `k8s/kserve/inferenceservice.yaml`
+- BentoML placeholder: `serving/bentoml/README.md`
+
 ## Update deployment image
 
 ```bash
@@ -155,6 +160,27 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 - GPU overlay requires NVIDIA device plugin and GPU nodes.
 - Model worker HPA scales on CPU utilization by default.
 - vLLM GPU worker uses `/data` for model cache and `HF_TOKEN` from `model-worker-secrets`.
+
+## 왜 GPU 노드풀을 쓰나요?
+
+- GPU는 비용이 크고 리소스 특성이 달라서 일반 워크로드와 분리 운영하는 것이 안정적입니다.
+- 노드풀 분리 + `nodeSelector`/`tolerations`로 **GPU 워크로드만** GPU 노드에 배치합니다.
+
+## nodeSelector / taints / tolerations 간단 설명
+
+- **nodeSelector**: 특정 라벨이 있는 노드에만 배치하도록 제한
+- **taint**: 해당 노드에 일반 워크로드가 올라오지 못하도록 차단
+- **toleration**: taint가 걸린 노드에 “이 워크로드는 올라가도 됨”을 허용
+
+## 서빙 표준화란?
+
+- 모델 배포/롤백/트래픽 전환을 **한 가지 표준 방식**으로 통일하는 것입니다.
+- KServe/BentoML 같은 도구로 표준화하면 운영 비용과 장애 대응 시간이 줄어듭니다.
+
+## 워커 스캐폴딩이란?
+
+- 실제 모델 서버를 만들기 전, **배포 구조와 틀**을 먼저 준비해 두는 작업입니다.
+- 이후 모델이나 프레임워크가 바뀌어도 운영 경로를 유지할 수 있습니다.
 
 ## GPU node pool 운영 가이드
 

@@ -126,6 +126,10 @@
   - **왜 필요?** 환경별 설정을 관리하기 위해.
   - **어디에?** `k8s/kustomization.yaml`, `kubectl apply -k k8s/`.
 
+- **GPU 노드풀(GPU Pool)**: GPU가 장착된 노드만 묶어 운영하는 전용 풀.
+  - **왜 필요?** 비용이 큰 GPU 자원을 일반 워크로드와 분리해 효율/안정성을 높이기 위해.
+  - **어디에?** `nodeSelector`/`taints`로 분리 운영.
+
 - **Overlay(오버레이)**: Kustomize에서 “기본 설정 위에 덧씌우는” 환경별 설정.
   - **왜 필요?** mock/gpu 같은 환경별 차이를 분리 관리하기 위해.
   - **어디에?** `k8s/overlays/`.
@@ -138,9 +142,29 @@
   - **왜 필요?** GPU 전용 노드에 워크로드를 허용하기 위해.
   - **어디에?** `k8s/overlays/gpu/model-worker-deployment.yaml`.
 
+- **Taint(테인트)**: 특정 노드에 “아무나 올라오지 못하게” 거는 제한.
+  - **왜 필요?** GPU 같은 전용 노드를 일반 워크로드로부터 보호하기 위해.
+  - **어디에?** GPU 노드에 `NoSchedule` 등의 taint 적용.
+
 - **HF_TOKEN(Hugging Face 토큰)**: Hugging Face에서 모델을 내려받기 위한 인증 토큰.
   - **왜 필요?** 승인(gated) 모델은 인증 없이는 다운로드가 불가.
   - **어디에?** `k8s/overlays/gpu/model-worker-secret.yaml`.
+
+- **KServe**: Kubernetes 기반 모델 서빙 표준(추론 서비스 관리).
+  - **왜 필요?** 모델 배포/롤백/트래픽 전환을 표준화하기 위해.
+  - **어디에?** `k8s/kserve/`.
+
+- **BentoML**: 모델 패키징/서빙을 위한 프레임워크.
+  - **왜 필요?** 모델을 서비스로 쉽게 만들고 배포하기 위해.
+  - **어디에?** `serving/bentoml/`.
+
+- **Worker Scaffolding(워커 스캐폴딩)**: 실제 구현 전에 배포 구조/틀만 먼저 만드는 작업.
+  - **왜 필요?** 운영 경로와 배포 구조를 미리 고정해 이후 구현 리스크를 줄이기 위해.
+  - **어디에?** `k8s/overlays/gpu/sglang/`, `serving/bentoml/`.
+
+- **Serving Standardization(서빙 표준화)**: 다양한 모델을 동일한 방식으로 배포/운영하는 체계.
+  - **왜 필요?** 배포/모니터링/롤백을 표준화해 운영 비용을 낮추기 위해.
+  - **어디에?** KServe/BentoML 도입 영역.
 
 - **kind**: 로컬 PC에서 Kubernetes 클러스터를 빠르게 띄우는 도구.
   - **왜 필요?** 실제 클라우드 없이도 K8s 배포/검증을 하기 위해.
@@ -797,6 +821,23 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 ## 요약
 - GPU 노드풀 분리, `nodeSelector`/`tolerations` 적용 기준 추가.
 - 세대별(A100/H100/B300) 노드풀 분리 운영 팁 정리.
+
+---
+
+# 작업 기록: KServe/BentoML 스캐폴딩 추가
+
+## 작업 목적
+- 서빙 표준화를 위한 KServe 템플릿과 BentoML 워커 스캐폴딩을 마련했습니다.
+
+## 변경 파일
+- `k8s/kserve/inferenceservice.yaml`
+- `k8s/kserve/README.md`
+- `serving/bentoml/README.md`
+- `k8s/README.md`
+
+## 요약
+- KServe InferenceService 템플릿 추가
+- BentoML은 구조만 잡고 실제 서비스 구현은 추후 진행
 
 ---
 
