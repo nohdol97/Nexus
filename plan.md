@@ -8,11 +8,33 @@
 ## 🏗️ 전체 아키텍처
 
 - **Client/Service → Gateway**: [[FastAPI]] + [[LiteLLM]] 기반 인증/라우팅/Rate Limit/Circuit Breaker/Fallback
-- **Gateway → Serving**: [[vLLM]] / [[SGLang]] / [[Triton]] 기반 LLM 서빙 계층
+- **Gateway → Serving**: [[vLLM]] (기본) + [[SGLang]] (보조) 기반 LLM 서빙 계층
 - **Serving → Platform**: [[Kubernetes]]에서 [[HPA]] 및 GPU Scheduling 적용
 - **Serving Abstraction**: [[KServe]] / [[BentoML]]로 표준화된 배포/롤백 지원
 - **MLOps**: [[Kubeflow]] + [[ArgoCD]] + [[Argo Workflows]] + [[Airflow]] 파이프라인
 - **Observability/Logging**: [[Prometheus]] + [[Grafana]] + [[Kafka]] → [[Elasticsearch]] / [[Kibana]]
+
+## ✅ 엔진 선택 요약
+
+- **기본 엔진: vLLM**
+  - 대규모 동시 요청 처리와 OpenAI 호환 API 운영에 유리
+  - 운영 복잡도를 낮추면서도 성능 효율이 높음
+- **보조 엔진: SGLang**
+  - 복잡한 프롬프트/워크플로우 제어가 필요한 경우에만 선택
+- **Triton: 보류**
+  - LLM 외 다양한 모델을 통합 서빙해야 할 때 고려
+
+## ⚖️ vLLM / SGLang / Triton 비교 요약
+
+- **vLLM**: 고속 처리, 동시성/메모리 효율 강점, OpenAI 호환 API 제공이 쉬움 → 운영 기본 엔진에 적합
+- **SGLang**: 복잡한 프롬프트/워크플로우 제어 강점 → 특정 고급 시나리오 보조 엔진에 적합
+- **Triton**: LLM 외 다양한 모델 통합 서빙에 강점, 운영 복잡도 높음 → 멀티모달/다모델 통합 시 고려
+
+## ✅ 선택 이유 정리
+
+- **운영 단순화 + 성능 효율**을 위해 vLLM을 기본 엔진으로 채택
+- **복잡한 오케스트레이션이 필요한 일부 요청**만 SGLang으로 처리해 유연성 확보
+- Triton은 **LLM 외 대규모 모델 통합 필요성이 생길 때**로 보류하여 현재 복잡도를 낮춤
 
 ## 🎯 JD 매칭 포인트
 
@@ -26,11 +48,11 @@
 
 ### 1단계: 모델 서빙 엔진 구축 (Core Engine)
 가장 먼저 AI 모델이 실제로 구동되는 '엔진' 부분을 구축합니다.
-- **기술 스택**: [[Python]], [[vLLM]], [[SGLang]], [[Triton]] <- GPU 환경 필요
+- **기술 스택**: [[Python]], [[vLLM]](기본), [[SGLang]](보조), [[Triton]](보류) <- GPU 환경 필요
 - **주요 구현**:
 	- [[Llama 3]] 또는 Mistral 오픈소스 모델을 vLLM 엔진으로 실행
 	- 분산 서빙(Distributed Serving) 환경 구성을 통한 확장성 확보
-	- SGLang/Triton을 활용한 vLLM과의 Throughput/Latency 비교 분석 및 최적화
+	- SGLang을 활용한 vLLM과의 Throughput/Latency 비교 분석 및 최적화
 
 ### 2단계: 지능형 API Gateway 개발 (The Brain)
 다양한 요청을 처리하고 장애에 대응하는 지능형 인터페이스를 만듭니다.
