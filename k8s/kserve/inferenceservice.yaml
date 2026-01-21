@@ -1,0 +1,32 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: llm-vllm
+  namespace: nexus
+spec:
+  predictor:
+    container:
+      image: vllm/vllm-openai:latest
+      args:
+        - "--model"
+        - "meta-llama/Meta-Llama-3-8B-Instruct"
+        - "--host"
+        - "0.0.0.0"
+        - "--port"
+        - "8001"
+      env:
+        - name: HF_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: model-worker-secrets
+              key: HF_TOKEN
+      ports:
+        - containerPort: 8001
+      resources:
+        requests:
+          cpu: "1000m"
+          memory: "4Gi"
+        limits:
+          cpu: "4000m"
+          memory: "16Gi"
+          nvidia.com/gpu: "1"
