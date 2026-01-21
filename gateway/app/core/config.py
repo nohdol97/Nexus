@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -21,6 +22,13 @@ class Settings(BaseSettings):
     default_upstream: str | None = None
     fallbacks: str = ""
     redis_url: str | None = None
+    api_key_policies: str = ""
+    route_policies: str = ""
+    jwt_secret: str | None = None
+    jwt_public_key: str | None = None
+    jwt_algorithms: str = "HS256"
+    jwt_issuer: str | None = None
+    jwt_audience: str | None = None
 
     def upstream_map(self) -> dict[str, str]:
         if not self.upstreams:
@@ -50,6 +58,31 @@ class Settings(BaseSettings):
             fallbacks = [value.strip() for value in values.split(",") if value.strip()]
             mapping[name.strip()] = fallbacks
         return mapping
+
+    def api_key_policy_map(self) -> dict[str, dict[str, object]]:
+        if not self.api_key_policies:
+            return {}
+        try:
+            data = json.loads(self.api_key_policies)
+        except json.JSONDecodeError as exc:
+            raise ValueError("Invalid API key policies JSON") from exc
+        if not isinstance(data, dict):
+            raise ValueError("API key policies must be a JSON object")
+        return data
+
+    def route_policy_map(self) -> dict[str, dict[str, object]]:
+        if not self.route_policies:
+            return {}
+        try:
+            data = json.loads(self.route_policies)
+        except json.JSONDecodeError as exc:
+            raise ValueError("Invalid route policies JSON") from exc
+        if not isinstance(data, dict):
+            raise ValueError("Route policies must be a JSON object")
+        return data
+
+    def jwt_algorithms_list(self) -> list[str]:
+        return [algo.strip() for algo in self.jwt_algorithms.split(",") if algo.strip()]
 
 
 settings = Settings()

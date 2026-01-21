@@ -45,6 +45,11 @@ All settings use the `GATEWAY_` prefix.
 - `GATEWAY_DEFAULT_UPSTREAM` (optional upstream name)
 - `GATEWAY_FALLBACKS` (example: `llama=gpt-4o-mini,mock`)
 - `GATEWAY_REDIS_URL` (optional; enables Redis-backed rate limiting)
+- `GATEWAY_API_KEY_POLICIES` (optional JSON for per-key rules)
+- `GATEWAY_ROUTE_POLICIES` (optional JSON for weighted/canary routing)
+- `GATEWAY_JWT_SECRET` / `GATEWAY_JWT_PUBLIC_KEY` (optional; enable JWT validation)
+- `GATEWAY_JWT_ALGORITHMS` (default: `HS256`)
+- `GATEWAY_JWT_ISSUER` / `GATEWAY_JWT_AUDIENCE` (optional)
 
 ## Observability
 
@@ -64,6 +69,43 @@ Fallback example:
 ```
 GATEWAY_UPSTREAMS="llama=http://localhost:8001;gpt-4o-mini=litellm://gpt-4o-mini"
 GATEWAY_FALLBACKS="llama=gpt-4o-mini"
+```
+
+## Routing policies (weighted/canary)
+
+Route policies are JSON that map a requested model to upstream targets.
+Targets must match upstream names defined in `GATEWAY_UPSTREAMS`.
+
+```bash
+GATEWAY_ROUTE_POLICIES='{
+  "chat": {
+    "strategy": "weighted",
+    "targets": [{"name":"primary","weight":90},{"name":"canary","weight":10}]
+  }
+}'
+```
+
+Canary policy example:
+
+```bash
+GATEWAY_ROUTE_POLICIES='{
+  "chat": {"strategy":"canary","primary":"primary","canary":"canary","percent":5}
+}'
+```
+
+## API key policies
+
+```bash
+GATEWAY_API_KEY_POLICIES='{
+  "dev-key": {"allowed_models":["chat"], "rate_limit_per_minute": 30}
+}'
+```
+
+## JWT
+
+```bash
+GATEWAY_JWT_SECRET="my-secret"
+GATEWAY_JWT_ALGORITHMS="HS256"
 ```
 
 ## Example request

@@ -24,7 +24,7 @@ class RateLimitBackendError(Exception):
 
 
 class RateLimiterBase(Protocol):
-    async def check(self, key: str) -> RateLimitSnapshot: ...
+    async def check(self, key: str, limit_override: int | None = None) -> RateLimitSnapshot: ...
 
     async def close(self) -> None: ...
 
@@ -36,19 +36,20 @@ class RateLimiter:
         self._requests: dict[str, deque[float]] = {}
         self._lock = Lock()
 
-    async def check(self, key: str) -> RateLimitSnapshot:
+    async def check(self, key: str, limit_override: int | None = None) -> RateLimitSnapshot:
+        max_requests = limit_override or self._max_requests
         now = time.time()
         with self._lock:
             entries = self._requests.setdefault(key, deque())
             while entries and entries[0] <= now - self._window_seconds:
                 entries.popleft()
-            if len(entries) >= self._max_requests:
+            if len(entries) >= max_requests:
                 reset_seconds = int(self._window_seconds - (now - entries[0])) if entries else 0
                 raise RateLimitExceeded(
                     f"Rate limit exceeded. Retry in {reset_seconds} seconds."
                 )
             entries.append(now)
-            remaining = self._max_requests - len(entries)
+            remaining = max_requests - len(entries)
             reset_seconds = int(self._window_seconds - (now - entries[0])) if entries else 0
             return RateLimitSnapshot(remaining=remaining, reset_seconds=reset_seconds)
 
@@ -62,10 +63,11 @@ class RedisRateLimiter:
         self._max_requests = max_requests
         self._window_seconds = window_seconds
 
-    async def check(self, key: str) -> RateLimitSnapshot:
+    async def check(self, key: str, limit_override: int | None = None) -> RateLimitSnapshot:
         now = time.time()
         window = int(now // self._window_seconds)
-        bucket_key = f"rate_limit:{key}:{window}"
+        max_requests = limit_override or self._max_requests
+        bucket_key = f"rate_limit:{key}:{max_requests}:{window}"
         try:
             pipe = self._redis.pipeline()
             pipe.incr(bucket_key)
@@ -74,11 +76,11 @@ class RedisRateLimiter:
         except Exception as exc:  # pragma: no cover - depends on redis availability
             raise RateLimitBackendError(str(exc)) from exc
 
-        if count > self._max_requests:
+        if count > max_requests:
             reset_seconds = int(self._window_seconds - (now % self._window_seconds))
             raise RateLimitExceeded(f"Rate limit exceeded. Retry in {reset_seconds} seconds.")
 
-        remaining = max(0, self._max_requests - count)
+        remaining = max(0, max_requests - count)
         reset_seconds = int(self._window_seconds - (now % self._window_seconds))
         return RateLimitSnapshot(remaining=remaining, reset_seconds=reset_seconds)
 

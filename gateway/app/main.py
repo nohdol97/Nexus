@@ -30,7 +30,7 @@ from app.core.rate_limiter import (
     RateLimiterBase,
     RedisRateLimiter,
 )
-from app.core.security import require_api_key
+from app.core.security import AuthContext, require_auth
 from app.schemas import ChatCompletionRequest
 from app.services.proxy import ProxyClient, UpstreamError
 from app.services.router import RouteSelector
@@ -148,10 +148,12 @@ async def chat_completions(
     payload: ChatCompletionRequest,
     request: Request,
     response: Response,
-    api_key: str = Depends(require_api_key),
+    auth: AuthContext = Depends(require_auth),
 ) -> dict[str, Any]:
     try:
-        snapshot = await rate_limiter.check(api_key)
+        snapshot = await rate_limiter.check(
+            auth.rate_limit_key, limit_override=auth.rate_limit_per_minute
+        )
     except RateLimitBackendError as exc:
         logger.warning(
             "rate_limit_backend_error",
@@ -173,6 +175,7 @@ async def chat_completions(
     }
     fallback_map = settings.fallback_map()
     candidates = [payload.model] + fallback_map.get(payload.model, [])
+    allowed_models = auth.allowed_models
     errors: list[str] = []
     seen: set[str] = set()
 
@@ -180,8 +183,11 @@ async def chat_completions(
         if model_name in seen:
             continue
         seen.add(model_name)
+        if allowed_models is not None and model_name not in allowed_models:
+            errors.append(f"{model_name}: forbidden")
+            continue
 
-        upstream = route_selector.select(model_name)
+        upstream = route_selector.select(model_name, request.state.request_id)
         if upstream is None:
             errors.append(f"{model_name}: no upstream")
             continue
@@ -247,6 +253,11 @@ async def chat_completions(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No upstream configured for requested model",
+        )
+    if errors and all("forbidden" in error for error in errors):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Model access denied",
         )
     raise HTTPException(
         status_code=status.HTTP_502_BAD_GATEWAY,
