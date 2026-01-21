@@ -8,6 +8,21 @@ This directory contains a minimal Kubernetes setup for the Nexus Gateway, model 
 kubectl apply -k k8s/
 ```
 
+## Kustomize overlays
+
+Two overlays are provided:
+
+- `k8s/overlays/mock`: CPU-only mock worker (default behavior)
+- `k8s/overlays/gpu`: vLLM GPU worker (requires NVIDIA GPU nodes)
+
+Apply one of them like this:
+
+```bash
+kubectl apply -k k8s/overlays/mock
+# or
+kubectl apply -k k8s/overlays/gpu
+```
+
 ## Local kind cluster (Mac/Windows/Linux)
 
 kind is a local Kubernetes cluster for quick verification.
@@ -109,6 +124,7 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 ## Notes
 - Update `gateway/deployment.yaml` to point at a real image (for example, a registry image).
 - Redis is deployed as a single instance for rate limiting.
+- GPU overlay requires NVIDIA device plugin and GPU nodes.
 
 ## Expose the gateway
 

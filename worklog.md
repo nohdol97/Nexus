@@ -126,6 +126,18 @@
   - **왜 필요?** 환경별 설정을 관리하기 위해.
   - **어디에?** `k8s/kustomization.yaml`, `kubectl apply -k k8s/`.
 
+- **Overlay(오버레이)**: Kustomize에서 “기본 설정 위에 덧씌우는” 환경별 설정.
+  - **왜 필요?** mock/gpu 같은 환경별 차이를 분리 관리하기 위해.
+  - **어디에?** `k8s/overlays/`.
+
+- **NodeSelector**: 특정 노드 라벨을 가진 노드에만 배치하는 규칙.
+  - **왜 필요?** GPU 노드에만 모델 워커를 띄우기 위해.
+  - **어디에?** `k8s/overlays/gpu/model-worker-deployment.yaml`.
+
+- **Toleration**: 특정 taint가 있는 노드에 스케줄될 수 있게 하는 설정.
+  - **왜 필요?** GPU 전용 노드에 워크로드를 허용하기 위해.
+  - **어디에?** `k8s/overlays/gpu/model-worker-deployment.yaml`.
+
 - **kind**: 로컬 PC에서 Kubernetes 클러스터를 빠르게 띄우는 도구.
   - **왜 필요?** 실제 클라우드 없이도 K8s 배포/검증을 하기 위해.
   - **어디에?** `kind create cluster` 로 실행.
@@ -710,3 +722,24 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 1) `nexus-model-worker` 이미지를 빌드하고 kind에 로드
 2) `kubectl apply -k k8s/`로 Gateway + Worker 배포
 3) Gateway가 `model-worker`로 요청을 전달
+
+---
+
+# 작업 기록: GPU 오버레이 스캐폴딩 추가
+
+## 작업 목적
+- mock 환경과 GPU 환경을 분리하기 위해 Kustomize overlay 구조를 추가했습니다.
+
+## 변경 파일
+- `k8s/overlays/mock/kustomization.yaml`
+- `k8s/overlays/gpu/kustomization.yaml`
+- `k8s/overlays/gpu/model-worker-deployment.yaml`
+  - vLLM 이미지 + GPU 리소스 + nodeSelector/toleration 설정
+- `k8s/overlays/gpu/gateway-configmap.yaml`
+  - GPU 워커 업스트림 이름을 `vllm`로 분리
+- `k8s/README.md`
+  - overlay 적용 방법 문서화
+
+## 사용 흐름(요약)
+1) mock: `kubectl apply -k k8s/overlays/mock`
+2) gpu: `kubectl apply -k k8s/overlays/gpu` (GPU 노드 필요)
