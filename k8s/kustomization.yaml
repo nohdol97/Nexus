@@ -11,5 +11,6 @@ resources:
   - gateway/hpa.yaml
   - model-worker/deployment.yaml
   - model-worker/service.yaml
+  - model-worker/hpa.yaml
   - redis/deployment.yaml
   - redis/service.yaml

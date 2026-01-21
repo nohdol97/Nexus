@@ -743,3 +743,18 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 ## 사용 흐름(요약)
 1) mock: `kubectl apply -k k8s/overlays/mock`
 2) gpu: `kubectl apply -k k8s/overlays/gpu` (GPU 노드 필요)
+
+---
+
+# 작업 기록: 모델 워커 HPA 추가
+
+## 작업 목적
+- 모델 워커도 트래픽에 따라 자동 확장할 수 있도록 HPA를 추가했습니다.
+
+## 변경 파일
+- `k8s/model-worker/hpa.yaml`
+- `k8s/kustomization.yaml`
+- `k8s/README.md`
+
+## 요약
+- CPU 사용률 70% 기준으로 1~3개 Pod 사이에서 자동 확장되도록 설정.

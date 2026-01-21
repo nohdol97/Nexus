@@ -125,6 +125,7 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 - Update `gateway/deployment.yaml` to point at a real image (for example, a registry image).
 - Redis is deployed as a single instance for rate limiting.
 - GPU overlay requires NVIDIA device plugin and GPU nodes.
+- Model worker HPA scales on CPU utilization by default.
 
 ## Expose the gateway
 
