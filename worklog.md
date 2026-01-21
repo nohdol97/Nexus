@@ -1,3 +1,89 @@
+# 비개발자용 요약 (전체 작업 맥락)
+
+> 참고: 아래 용어 설명은 지속적으로 업데이트합니다. 새로운 작업이 추가되면 관련 용어/맥락도 함께 반영합니다.
+
+## 한 줄 요약
+- Nexus는 여러 AI 모델을 안전하고 안정적으로 연결해 주는 **중앙 관문(Gateway)** 을 만들고, 그 상태를 **관찰(모니터링)** 할 수 있게 하는 프로젝트입니다.
+
+## 왜 필요한가요?
+- 여러 모델/서비스를 한 곳에서 통합 관리하면 운영이 쉬워지고 장애 대응이 빨라집니다.
+- 트래픽이 몰려도 안정적으로 동작하도록 **제한(Rate Limit)**, **장애 차단(Circuit Breaker)**, **대체 경로(Fallback)** 를 둡니다.
+- 문제가 생겼을 때 원인을 빠르게 찾기 위해 **지표(Metrics)** 와 **로그(Logs)** 를 수집합니다.
+
+## 어디에 쓰이나요?
+- 회사 내부/서비스에서 모델 호출이 많을 때 “한 곳(게이트웨이)”으로 모아 관리합니다.
+- 운영 대시보드(Grafana)에서 요청 수, 지연 시간, 에러율 등을 확인합니다.
+
+---
+
+# 용어 설명 (쉬운 버전)
+
+- **Gateway(게이트웨이)**: 모든 요청이 처음 들어오는 “관문 서버”.
+  - **왜 필요?** 인증/정책/라우팅을 한곳에서 처리해 관리가 쉬워짐.
+  - **어디에?** `gateway/` 폴더의 FastAPI 앱.
+
+- **Upstream(업스트림)**: 실제로 응답을 만들어 주는 모델 서버.
+  - **왜 필요?** 게이트웨이는 요청을 전달만 하고, 결과는 업스트림이 생성.
+  - **어디에?** `GATEWAY_UPSTREAMS` 설정에 등록.
+
+- **API**: 서비스가 서로 통신하기 위한 규칙(주소/형식).
+  - **왜 필요?** 통일된 방식으로 요청/응답을 주고받기 위해.
+  - **어디에?** `/v1/chat/completions` 같은 엔드포인트.
+
+- **API Key(키)**: 간단한 인증 수단(비밀번호 같은 역할).
+  - **왜 필요?** 아무나 호출하지 못하도록 접근 제어.
+  - **어디에?** `X-API-Key` 헤더로 전송.
+
+- **JWT(JSON Web Token)**: 서명된 인증 토큰.
+  - **왜 필요?** 사용자/권한 정보를 안전하게 전달.
+  - **어디에?** `Authorization: Bearer <token>` 헤더.
+
+- **Rate Limiting(호출 제한)**: 일정 시간에 허용하는 요청 수 제한.
+  - **왜 필요?** 과부하/남용 방지.
+  - **어디에?** 게이트웨이에서 자동 차단.
+
+- **Redis**: 빠른 메모리 DB.
+  - **왜 필요?** 여러 서버가 동시에 Rate Limit을 공유하기 위해.
+  - **어디에?** `GATEWAY_REDIS_URL` 설정.
+
+- **Circuit Breaker(회로 차단기)**: 오류가 반복되면 해당 업스트림으로의 호출을 잠시 차단.
+  - **왜 필요?** 장애가 있을 때 연쇄 실패를 막기 위해.
+  - **어디에?** 업스트림 요청 전에 체크.
+
+- **Fallback(대체 경로)**: 주 모델이 실패하면 다른 모델로 자동 전환.
+  - **왜 필요?** 서비스 연속성 확보.
+  - **어디에?** `GATEWAY_FALLBACKS` 설정.
+
+- **Canary(카나리 배포)**: 새 버전으로 “일부”만 보내 테스트.
+  - **왜 필요?** 전체 장애 없이 안전한 배포.
+  - **어디에?** `GATEWAY_ROUTE_POLICIES`에서 비율 설정.
+
+- **Weighted Routing(가중치 라우팅)**: 여러 업스트림에 비율로 트래픽 분배.
+  - **왜 필요?** 특정 모델에 트래픽을 더/덜 보내고 싶을 때.
+  - **어디에?** `GATEWAY_ROUTE_POLICIES`.
+
+- **Prometheus(프로메테우스)**: 지표 수집기.
+  - **왜 필요?** 요청 수, 지연 시간 같은 숫자를 모음.
+  - **어디에?** `/metrics` 엔드포인트에서 수집.
+
+- **Grafana(그라파나)**: 지표 시각화 대시보드.
+  - **왜 필요?** Prometheus 데이터를 그래프로 쉽게 보기 위해.
+  - **어디에?** `http://localhost:3000`에서 대시보드 확인.
+
+- **Logging(로그)**: 발생한 이벤트 기록.
+  - **왜 필요?** 장애 원인을 추적하기 위해.
+  - **어디에?** JSON 형태로 표준 출력.
+
+- **Docker/Compose**: 여러 서비스를 한 번에 실행하는 도구.
+  - **왜 필요?** Gateway + Prometheus + Grafana를 쉽게 실행.
+  - **어디에?** `docker-compose.yml` 사용.
+
+- **Healthcheck(헬스체크)**: 서비스가 정상인지 확인하는 간단한 검사.
+  - **왜 필요?** 준비가 안 된 서비스를 구분하기 위해.
+  - **어디에?** `docker-compose.vllm.yml`의 vLLM healthcheck.
+
+---
+
 # 작업 기록: FastAPI Gateway 골격 구현
 
 ## 작업 목적
@@ -360,3 +446,51 @@ MODEL_ID=meta-llama/Meta-Llama-3-8B-Instruct \
 
 ## 현재 제약/가정
 - Redis 연결 실패 시 요청은 허용되며 로그에 오류가 남습니다.
+
+---
+
+# 작업 기록: Auth 정책 강화 및 라우팅 정책 추가
+
+## 작업 목적
+- API Key/JWT 인증 정책을 강화하고, 모델 요청에 대해 가중치/카나리 라우팅을 지원하도록 개선했습니다.
+
+## 구현 범위 요약
+- API Key 정책(JSON) 지원: 허용 모델/개별 Rate Limit
+- JWT 검증 지원(HS256/RS256)
+- 가중치/카나리/직접 라우팅 정책 추가
+- 관련 설정 및 문서/테스트 업데이트
+
+## 변경 파일
+- `gateway/app/core/security.py`
+  - JWT 검증 및 API Key 정책 적용
+  - AuthContext 추가
+- `gateway/app/core/config.py`
+  - `GATEWAY_API_KEY_POLICIES`, `GATEWAY_ROUTE_POLICIES`, JWT 설정 추가
+- `gateway/app/services/router.py`
+  - weighted/canary/direct 라우팅 정책 구현
+- `gateway/app/core/rate_limiter.py`
+  - per-key override 지원
+- `gateway/app/main.py`
+  - JWT/정책 기반 인증 및 모델 접근 제어 반영
+- `gateway/tests/test_gateway.py`
+  - 라우팅 정책 및 JWT 테스트 추가
+- `gateway/README.md`
+  - 정책/라우팅/JWT 설정 예시 추가
+- `gateway/pyproject.toml`
+  - `pyjwt` 의존성 추가
+
+## 설정 예시
+```bash
+GATEWAY_API_KEY_POLICIES='{"dev-key": {"allowed_models":["chat"], "rate_limit_per_minute": 30}}'
+GATEWAY_ROUTE_POLICIES='{"chat": {"strategy":"canary","primary":"primary","canary":"canary","percent":5}}'
+GATEWAY_JWT_SECRET="my-secret"
+```
+
+## 테스트 결과
+- `pytest` 실행 기준: 기존 테스트 + JWT/라우팅 테스트 통과
+
+## 현재 제약/가정
+- 라우팅 정책의 target 이름은 `GATEWAY_UPSTREAMS`에 정의된 이름과 일치해야 합니다.
+- JWT는 설정된 키/알고리즘에 따라 유효성 검증만 수행합니다.
+
+---
