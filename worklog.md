@@ -102,6 +102,10 @@
   - **왜 필요?** Pod가 바뀌어도 동일한 주소로 접근하기 위해.
   - **어디에?** `k8s/gateway/service.yaml`, `k8s/redis/service.yaml`.
 
+- **LoadBalancer**: 외부에서 접근 가능한 IP를 서비스에 붙여주는 방식.
+  - **왜 필요?** 클러스터 밖에서도 접근 가능하게 하려고.
+  - **어디에?** `k8s/gateway/service-lb.yaml`.
+
 - **ConfigMap**: 설정 값을 담는 Kubernetes 리소스.
   - **왜 필요?** 설정과 코드를 분리해 운영하기 위해.
   - **어디에?** `k8s/gateway/configmap.yaml`.
@@ -125,6 +129,10 @@
 - **Ingress Controller**: Ingress 규칙을 실제로 처리해 주는 “입구 관리자”.
   - **왜 필요?** Ingress만 만들면 동작하지 않고, 이를 처리할 컨트롤러가 꼭 필요.
   - **어디에?** kind 환경에서는 `ingress-nginx` 설치로 활성화.
+
+- **MetalLB**: 로컬/온프레미스 K8s에서 LoadBalancer를 흉내 내는 구성요소.
+  - **왜 필요?** kind 같은 로컬 클러스터에서 외부 IP를 붙이기 위해.
+  - **어디에?** `kubectl apply -f metallb...`로 설치.
 
 - **Node(노드)**: Kubernetes에서 실제로 컨테이너가 실행되는 서버(머신).
   - **왜 필요?** Pod가 배치되는 실제 실행 공간.
@@ -656,3 +664,22 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 ## 결과
 - `/health`가 정상 응답해 Gateway가 실행 중임을 확인.
 - kind 환경에서는 LoadBalancer가 `<pending>` 상태이므로, Ingress/Port-forward 방식으로 검증함.
+
+---
+
+# 작업 기록: kind에서 MetalLB로 LoadBalancer 테스트 경로 정리
+
+## 작업 목적
+- 로컬 kind 환경에서도 LoadBalancer 서비스를 테스트할 수 있도록 MetalLB 설정 방법을 문서화했습니다.
+
+## 변경 파일
+- `k8s/README.md`
+  - MetalLB 설치, IP 풀 설정, EXTERNAL-IP 확인 절차 추가
+
+## 핵심 요약
+- kind는 기본적으로 LoadBalancer가 `<pending>` 상태라 외부 IP가 생기지 않습니다.
+- MetalLB를 설치하고 IP 풀을 지정하면 로컬에서도 LoadBalancer IP를 받을 수 있습니다.
+
+## 검증 결과
+- `nexus-gateway-lb`에 EXTERNAL-IP가 할당됨(예: `172.20.255.200`).
+- Mac(Docker Desktop) 환경에서는 해당 IP가 호스트에서 바로 열리지 않을 수 있어, 필요 시 Ingress/Port-forward로 확인.
