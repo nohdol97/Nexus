@@ -24,6 +24,15 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 - Update `gateway/deployment.yaml` to point at a real image (for example, a registry image).
 - Redis is deployed as a single instance for rate limiting.
 
+## Expose the gateway
+
+Two options are provided:
+
+- LoadBalancer service: `k8s/gateway/service-lb.yaml`
+- Ingress (nginx): `k8s/gateway/ingress.yaml` (host: `gateway.local`)
+
+If you only want one, remove the other from `k8s/kustomization.yaml`.
+
 ## GPU scheduling (model workers)
 
 When you add model workers (vLLM/SGLang/Triton), schedule them to GPU nodes:

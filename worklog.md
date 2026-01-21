@@ -600,3 +600,27 @@ kubectl apply -k k8s/
 IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/build_push_gateway.sh
 IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway_image.sh
 ```
+
+---
+
+# 작업 기록: Gateway 서비스 노출(Ingress/LoadBalancer) 추가
+
+## 작업 목적
+- Kubernetes에서 Gateway를 외부에 노출하기 위해 Ingress 및 LoadBalancer 옵션을 추가했습니다.
+
+## 변경 파일
+- `k8s/gateway/ingress.yaml`
+  - NGINX Ingress 기반 호스트 노출 (gateway.local)
+- `k8s/gateway/service-lb.yaml`
+  - LoadBalancer 타입 서비스
+- `k8s/kustomization.yaml`
+  - 신규 리소스 포함
+- `k8s/README.md`
+  - 노출 방법 설명 추가
+
+## 사용 방법
+- Ingress 사용 시: `gateway.local` 도메인을 로컬 DNS/hosts에 연결
+- LoadBalancer 사용 시: 클라우드 환경에서 외부 IP 할당
+
+## 주의사항
+- 둘 중 하나만 쓰려면 `k8s/kustomization.yaml`에서 다른 리소스를 제거하세요.
