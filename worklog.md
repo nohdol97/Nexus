@@ -166,6 +166,26 @@
   - **왜 필요?** 배포/모니터링/롤백을 표준화해 운영 비용을 낮추기 위해.
   - **어디에?** KServe/BentoML 도입 영역.
 
+- **Kubeflow**: ML 파이프라인 실행/오케스트레이션 플랫폼.
+  - **왜 필요?** 학습/검증/배포 단계를 자동화하기 위해.
+  - **어디에?** `mlops/README.md`.
+
+- **Argo CD**: GitOps 기반 배포 자동화 도구.
+  - **왜 필요?** Git 변경을 배포에 자동 반영하기 위해.
+  - **어디에?** `mlops/README.md`.
+
+- **Argo Workflows**: 쿠버네티스 배치 워크플로우 엔진.
+  - **왜 필요?** 대용량 작업을 단계별로 실행/관리하기 위해.
+  - **어디에?** `mlops/README.md`.
+
+- **Airflow**: 배치/스케줄링 오케스트레이션 도구.
+  - **왜 필요?** 정기 배치 작업(재학습 등)을 운영하기 위해.
+  - **어디에?** `mlops/README.md`.
+
+- **MLflow**: 모델 버전/메타데이터 관리(모델 레지스트리).
+  - **왜 필요?** 모델 버전과 배포 이력을 관리하기 위해.
+  - **어디에?** `mlops/README.md`.
+
 - **kind**: 로컬 PC에서 Kubernetes 클러스터를 빠르게 띄우는 도구.
   - **왜 필요?** 실제 클라우드 없이도 K8s 배포/검증을 하기 위해.
   - **어디에?** `kind create cluster` 로 실행.
@@ -838,6 +858,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 ## 요약
 - KServe InferenceService 템플릿 추가
 - BentoML은 구조만 잡고 실제 서비스 구현은 추후 진행
+
+---
+
+# 작업 기록: MLOps 스캐폴딩 문서 추가
+
+## 작업 목적
+- 4단계(Kubeflow/Argo/MLflow) 진행을 위한 기본 문서 틀을 추가했습니다.
+
+## 변경 파일
+- `mlops/README.md`
+
+## 요약
+- 데이터 검증 → 양자화 → 모델 등록 → 배포 흐름을 정리
+- Kubeflow/Argo CD/Argo Workflows/Airflow/MLflow 역할을 요약
 
 ---
 
