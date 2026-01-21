@@ -1,6 +1,6 @@
 # Kubernetes Deployment
 
-This directory contains a minimal Kubernetes setup for the Nexus Gateway and Redis.
+This directory contains a minimal Kubernetes setup for the Nexus Gateway, model worker, and Redis.
 
 ## Apply
 
@@ -16,11 +16,13 @@ kind is a local Kubernetes cluster for quick verification.
 # 1) Create cluster
 kind create cluster --name nexus
 
-# 2) Build gateway image locally
+# 2) Build gateway + model worker images locally
 docker build -t nexus-gateway:latest -f gateway/Dockerfile gateway
+docker build -t nexus-model-worker:latest -f serving/mock-worker/Dockerfile serving/mock-worker
 
-# 3) Load image into kind
+# 3) Load images into kind
 kind load docker-image nexus-gateway:latest --name nexus
+kind load docker-image nexus-model-worker:latest --name nexus
 
 # 4) Apply manifests
 kubectl apply -k k8s/
@@ -71,7 +73,7 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-    - 172.18.255.200-172.18.255.250
+    - 172.20.255.200-172.20.255.250
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
@@ -90,6 +92,12 @@ Note: replace the example IP range with one that fits your `kind` subnet.
 
 ```bash
 IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/build_push_gateway.sh
+```
+
+## Model worker image (mock)
+
+```bash
+docker build -t nexus-model-worker:latest -f serving/mock-worker/Dockerfile serving/mock-worker
 ```
 
 ## Update deployment image
@@ -130,5 +138,5 @@ kubectl -n nexus port-forward svc/nexus-gateway 8000:80
 curl -X POST http://localhost:8000/v1/chat/completions \
   -H "X-API-Key: dev-key" \
   -H "Content-Type: application/json" \
-  -d '{"model":"mock","messages":[{"role":"user","content":"hello"}]}'
+  -d '{"model":"mock-worker","messages":[{"role":"user","content":"hello"}]}'
 ```

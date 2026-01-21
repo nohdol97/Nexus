@@ -9,5 +9,7 @@ resources:
   - gateway/service-lb.yaml
   - gateway/ingress.yaml
   - gateway/hpa.yaml
+  - model-worker/deployment.yaml
+  - model-worker/service.yaml
   - redis/deployment.yaml
   - redis/service.yaml

@@ -26,6 +26,10 @@
   - **왜 필요?** 게이트웨이는 요청을 전달만 하고, 결과는 업스트림이 생성.
   - **어디에?** `GATEWAY_UPSTREAMS` 설정에 등록.
 
+- **Model Worker(모델 워커)**: 모델 추론을 실제로 수행하는 서버.
+  - **왜 필요?** Gateway가 요청을 전달하면 Worker가 결과를 만들어 줌.
+  - **어디에?** `k8s/model-worker/` 매니페스트, `serving/mock-worker/` 코드.
+
 - **API**: 서비스가 서로 통신하기 위한 규칙(주소/형식).
   - **왜 필요?** 통일된 방식으로 요청/응답을 주고받기 위해.
   - **어디에?** `/v1/chat/completions` 같은 엔드포인트.
@@ -683,3 +687,26 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 ## 검증 결과
 - `nexus-gateway-lb`에 EXTERNAL-IP가 할당됨(예: `172.20.255.200`).
 - Mac(Docker Desktop) 환경에서는 해당 IP가 호스트에서 바로 열리지 않을 수 있어, 필요 시 Ingress/Port-forward로 확인.
+
+---
+
+# 작업 기록: 모델 워커(mock) 추가 및 K8s 연결
+
+## 작업 목적
+- GPU 없이도 Gateway ↔ 모델 워커 구조를 K8s에서 검증할 수 있도록 CPU 기반 mock 워커를 추가했습니다.
+
+## 변경 파일
+- `serving/mock-worker/`
+  - OpenAI 호환 `/v1/chat/completions` 제공
+- `k8s/model-worker/deployment.yaml`
+- `k8s/model-worker/service.yaml`
+- `k8s/kustomization.yaml`
+- `k8s/gateway/configmap.yaml`
+  - 기본 업스트림을 `model-worker`로 연결
+- `k8s/README.md`
+  - kind 환경에서 워커 이미지 빌드/로드 안내 추가
+
+## 사용 흐름(요약)
+1) `nexus-model-worker` 이미지를 빌드하고 kind에 로드
+2) `kubectl apply -k k8s/`로 Gateway + Worker 배포
+3) Gateway가 `model-worker`로 요청을 전달
