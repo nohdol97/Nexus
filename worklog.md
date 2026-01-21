@@ -786,6 +786,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ---
 
+# 작업 기록: GPU 노드풀 운영 가이드 추가
+
+## 작업 목적
+- GPU 노드풀을 안정적으로 운영하기 위한 기본 규칙을 문서화했습니다.
+
+## 변경 파일
+- `k8s/README.md`
+
+## 요약
+- GPU 노드풀 분리, `nodeSelector`/`tolerations` 적용 기준 추가.
+- 세대별(A100/H100/B300) 노드풀 분리 운영 팁 정리.
+
+---
+
 # 작업 기록: 모델 워커 HPA 추가
 
 ## 작업 목적

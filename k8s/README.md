@@ -156,6 +156,28 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 - Model worker HPA scales on CPU utilization by default.
 - vLLM GPU worker uses `/data` for model cache and `HF_TOKEN` from `model-worker-secrets`.
 
+## GPU node pool 운영 가이드
+
+권장 운영 방식:
+- GPU 노드풀을 별도로 분리하고 `nodepool=gpu` 라벨을 부여
+- GPU 전용 노드에는 `nvidia.com/gpu=true:NoSchedule` 같은 taint 적용
+- GPU 워크로드는 `nodeSelector` + `tolerations` 조합으로만 스케줄
+
+예시:
+
+```yaml
+nodeSelector:
+  nodepool: gpu
+tolerations:
+  - key: "nvidia.com/gpu"
+    operator: "Exists"
+    effect: "NoSchedule"
+```
+
+운영 팁:
+- A100/H100/B300 등 세대별로 노드풀을 분리하면 비용/성능 튜닝이 쉬움
+- 모델 워커별 리소스 스펙을 노드풀에 맞춰 표준화 (예: 1 GPU / 16Gi / 4 vCPU)
+
 ## Expose the gateway
 
 Two options are provided:
