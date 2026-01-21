@@ -82,6 +82,54 @@
   - **왜 필요?** 준비가 안 된 서비스를 구분하기 위해.
   - **어디에?** `docker-compose.vllm.yml`의 vLLM healthcheck.
 
+- **Kubernetes(K8s)**: 컨테이너 앱을 여러 서버에서 자동으로 운영하는 플랫폼.
+  - **왜 필요?** 서비스 배포/확장/복구를 자동화하기 위해.
+  - **어디에?** `k8s/` 폴더 매니페스트.
+
+- **Namespace(네임스페이스)**: Kubernetes 안에서 리소스를 구분하는 공간.
+  - **왜 필요?** 서비스/환경별로 자원을 분리하기 위해.
+  - **어디에?** `k8s/namespace.yaml`.
+
+- **Deployment(디플로이먼트)**: 애플리케이션을 원하는 개수의 Pod로 유지하는 리소스.
+  - **왜 필요?** 장애 시 자동 복구와 롤링 업데이트를 위해.
+  - **어디에?** `k8s/gateway/deployment.yaml`, `k8s/redis/deployment.yaml`.
+
+- **Pod(파드)**: Kubernetes에서 실행되는 가장 작은 단위(컨테이너 묶음).
+  - **왜 필요?** 실제 앱이 구동되는 단위이기 때문.
+  - **어디에?** Deployment가 Pod를 생성.
+
+- **Service(서비스)**: 여러 Pod를 하나의 주소로 묶어주는 네트워크 엔드포인트.
+  - **왜 필요?** Pod가 바뀌어도 동일한 주소로 접근하기 위해.
+  - **어디에?** `k8s/gateway/service.yaml`, `k8s/redis/service.yaml`.
+
+- **ConfigMap**: 설정 값을 담는 Kubernetes 리소스.
+  - **왜 필요?** 설정과 코드를 분리해 운영하기 위해.
+  - **어디에?** `k8s/gateway/configmap.yaml`.
+
+- **Secret(시크릿)**: 비밀번호/키 같은 민감 정보를 담는 리소스.
+  - **왜 필요?** 민감 정보를 안전하게 관리하기 위해.
+  - **어디에?** `k8s/gateway/secret.yaml`.
+
+- **HPA(Horizontal Pod Autoscaler)**: 트래픽에 따라 Pod 수를 자동 조절.
+  - **왜 필요?** 부하가 많을 때 자동 확장하기 위해.
+  - **어디에?** `k8s/gateway/hpa.yaml`.
+
+- **Kustomize(커스터마이즈)**: 여러 K8s 파일을 묶어 쉽게 배포하는 도구.
+  - **왜 필요?** 환경별 설정을 관리하기 위해.
+  - **어디에?** `k8s/kustomization.yaml`, `kubectl apply -k k8s/`.
+
+- **Node(노드)**: Kubernetes에서 실제로 컨테이너가 실행되는 서버(머신).
+  - **왜 필요?** Pod가 배치되는 실제 실행 공간.
+  - **어디에?** 클러스터의 워커 노드.
+
+- **GPU Scheduling( GPU 스케줄링 )**: GPU가 있는 노드에만 특정 작업을 배치하는 것.
+  - **왜 필요?** 모델 서빙은 GPU가 필요하기 때문.
+  - **어디에?** `k8s/README.md`의 예시.
+
+- **vLLM / SGLang / Triton**: LLM 모델을 빠르게 서빙하는 엔진(프레임워크).
+  - **왜 필요?** 대규모 추론 성능 최적화를 위해.
+  - **어디에?** 향후 모델 워커로 추가 예정(업스트림으로 연결).
+
 ---
 
 # 작업 기록: FastAPI Gateway 골격 구현
@@ -494,3 +542,40 @@ GATEWAY_JWT_SECRET="my-secret"
 - JWT는 설정된 키/알고리즘에 따라 유효성 검증만 수행합니다.
 
 ---
+
+---
+
+# 작업 기록: Kubernetes 배포 초안 추가
+
+## 작업 목적
+- 3단계(쿠버네티스 인프라 이식)를 시작하기 위해 Gateway와 Redis의 K8s 배포 초안을 마련했습니다.
+
+## 구현 범위 요약
+- Namespace, Gateway, Redis, HPA 리소스 작성
+- ConfigMap/Secret 기반 환경 변수 구성
+- Kustomize 적용 가능하도록 구성
+
+## 변경 파일
+- `k8s/namespace.yaml`
+- `k8s/gateway/configmap.yaml`
+- `k8s/gateway/secret.yaml`
+- `k8s/gateway/deployment.yaml`
+- `k8s/gateway/service.yaml`
+- `k8s/gateway/hpa.yaml`
+- `k8s/redis/deployment.yaml`
+- `k8s/redis/service.yaml`
+- `k8s/kustomization.yaml`
+- `k8s/README.md`
+
+## 실행 방법
+```bash
+kubectl apply -k k8s/
+```
+
+## 현재 제약/가정
+- Gateway 이미지 이름은 로컬 빌드 기준이며, 실제 레지스트리 이미지로 변경 필요합니다.
+- Redis는 단일 인스턴스이며 HA 구성은 추후 적용합니다.
+
+## 다음 단계 제안
+- Gateway 이미지 빌드/푸시 파이프라인 추가
+- 모델 워커(vLLM/SGLang/Triton) K8s 매니페스트 확장
