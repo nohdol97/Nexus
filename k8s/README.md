@@ -23,6 +23,12 @@ kubectl apply -k k8s/overlays/mock
 kubectl apply -k k8s/overlays/gpu
 ```
 
+Optional SGLang worker (GPU):
+
+```bash
+kubectl apply -k k8s/overlays/gpu/sglang
+```
+
 ## Local kind cluster (Mac/Windows/Linux)
 
 kind is a local Kubernetes cluster for quick verification.
@@ -115,6 +121,12 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/build_push_gate
 docker build -t nexus-model-worker:latest -f serving/mock-worker/Dockerfile serving/mock-worker
 ```
 
+## GPU worker notes (vLLM)
+
+- `MODEL_ID` in `k8s/overlays/gpu/model-worker-deployment.yaml`
+- Optional token in `k8s/overlays/gpu/model-worker-secret.yaml`
+  - `HF_TOKEN` is a Hugging Face access token for gated/private models
+
 ## Update deployment image
 
 ```bash
@@ -126,6 +138,7 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 - Redis is deployed as a single instance for rate limiting.
 - GPU overlay requires NVIDIA device plugin and GPU nodes.
 - Model worker HPA scales on CPU utilization by default.
+- vLLM GPU worker uses `/data` for model cache and `HF_TOKEN` from `model-worker-secrets`.
 
 ## Expose the gateway
 

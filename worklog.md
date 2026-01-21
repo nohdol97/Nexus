@@ -138,6 +138,10 @@
   - **왜 필요?** GPU 전용 노드에 워크로드를 허용하기 위해.
   - **어디에?** `k8s/overlays/gpu/model-worker-deployment.yaml`.
 
+- **HF_TOKEN(Hugging Face 토큰)**: Hugging Face에서 모델을 내려받기 위한 인증 토큰.
+  - **왜 필요?** 승인(gated) 모델은 인증 없이는 다운로드가 불가.
+  - **어디에?** `k8s/overlays/gpu/model-worker-secret.yaml`.
+
 - **kind**: 로컬 PC에서 Kubernetes 클러스터를 빠르게 띄우는 도구.
   - **왜 필요?** 실제 클라우드 없이도 K8s 배포/검증을 하기 위해.
   - **어디에?** `kind create cluster` 로 실행.
@@ -743,6 +747,28 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 ## 사용 흐름(요약)
 1) mock: `kubectl apply -k k8s/overlays/mock`
 2) gpu: `kubectl apply -k k8s/overlays/gpu` (GPU 노드 필요)
+
+---
+
+# 작업 기록: GPU 워커 매니페스트 현실화 + SGLang 스켈레톤 추가
+
+## 작업 목적
+- GPU 환경에서 vLLM 워커를 실제 운영에 가까운 형태로 구성하고,
+- SGLang 보조 워커를 추가할 수 있는 스켈레톤을 마련했습니다.
+
+## 변경 파일
+- `k8s/overlays/gpu/model-worker-deployment.yaml`
+  - vLLM 이미지, GPU 리소스, 캐시 볼륨, startupProbe 추가
+- `k8s/overlays/gpu/model-worker-secret.yaml`
+  - `HF_TOKEN` 준비용 시크릿
+- `k8s/overlays/gpu/sglang/`
+  - SGLang 보조 워커 템플릿(이미지/엔트리포인트는 실제 환경에 맞게 교체)
+- `k8s/README.md`
+  - GPU 워커 설정 및 SGLang 적용 방법 안내
+
+## 요약
+- vLLM은 기본 엔진으로 운영 가능한 수준의 매니페스트로 보강.
+- SGLang은 보조 엔진이므로 별도 overlay로 필요할 때만 적용.
 
 ---
 
