@@ -2,6 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../../
+  - model-worker-secret.yaml
 patches:
   - path: model-worker-deployment.yaml
   - path: gateway-configmap.yaml

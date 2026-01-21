@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sglang-worker
+  namespace: nexus
+spec:
+  selector:
+    app: sglang-worker
+  ports:
+    - name: http
+      port: 8002
+      targetPort: 8002

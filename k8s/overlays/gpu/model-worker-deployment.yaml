@@ -26,6 +26,33 @@ spec:
           env:
             - name: MODEL_ID
               value: "meta-llama/Meta-Llama-3-8B-Instruct"
+            - name: HF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: model-worker-secrets
+                  key: HF_TOKEN
+            - name: HF_HOME
+              value: /data/hf
+            - name: TRANSFORMERS_CACHE
+              value: /data/hf
+          volumeMounts:
+            - name: model-cache
+              mountPath: /data
+          readinessProbe:
+            tcpSocket:
+              port: 8001
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            tcpSocket:
+              port: 8001
+            periodSeconds: 20
+            failureThreshold: 3
+          startupProbe:
+            tcpSocket:
+              port: 8001
+            periodSeconds: 10
+            failureThreshold: 60
           resources:
             requests:
               cpu: "1000m"
@@ -34,3 +61,6 @@ spec:
               cpu: "4000m"
               memory: "16Gi"
               nvidia.com/gpu: "1"
+      volumes:
+        - name: model-cache
+          emptyDir: {}
