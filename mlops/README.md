@@ -27,3 +27,9 @@ This folder documents the planned ML pipeline and GitOps flow.
 ```bash
 kubectl apply -f mlops/kubeflow/pipeline.yaml
 ```
+
+## Argo CD 앱 템플릿
+
+```bash
+kubectl apply -f mlops/argocd/application.yaml
+```

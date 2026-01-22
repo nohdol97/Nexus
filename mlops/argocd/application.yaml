@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nexus-gateway
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/your-org/nexus.git
+    targetRevision: main
+    path: k8s/overlays/mock
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: nexus
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false

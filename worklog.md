@@ -172,7 +172,7 @@
 
 - **Argo CD**: GitOps 기반 배포 자동화 도구.
   - **왜 필요?** Git 변경을 배포에 자동 반영하기 위해.
-  - **어디에?** `mlops/README.md`.
+  - **어디에?** `mlops/argocd/`, `mlops/README.md`.
 
 - **Argo Workflows**: 쿠버네티스 배치 워크플로우 엔진.
   - **왜 필요?** 대용량 작업을 단계별로 실행/관리하기 위해.
@@ -185,6 +185,10 @@
 - **MLflow**: 모델 버전/메타데이터 관리(모델 레지스트리).
   - **왜 필요?** 모델 버전과 배포 이력을 관리하기 위해.
   - **어디에?** `mlops/README.md`.
+
+- **GitOps(깃옵스)**: Git 저장소를 “배포의 단일 소스”로 삼는 운영 방식.
+  - **왜 필요?** 변경 이력 추적과 자동 배포를 표준화하기 위해.
+  - **어디에?** `mlops/argocd/` (Argo CD가 GitOps를 실행).
 
 - **kind**: 로컬 PC에서 Kubernetes 클러스터를 빠르게 띄우는 도구.
   - **왜 필요?** 실제 클라우드 없이도 K8s 배포/검증을 하기 위해.
@@ -886,6 +890,21 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - 데이터 검증 → 양자화 → 모델 등록 → 배포 순서의 기본 템플릿 추가
+
+---
+
+# 작업 기록: Argo CD 앱 스캐폴딩 추가
+
+## 작업 목적
+- GitOps 기반 배포를 위한 Argo CD Application 템플릿을 추가했습니다.
+
+## 변경 파일
+- `mlops/argocd/application.yaml`
+- `mlops/argocd/README.md`
+- `mlops/README.md`
+
+## 요약
+- Argo CD에서 Kustomize overlay를 배포할 수 있는 기본 템플릿 제공
 
 ---
 
