@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: nexus-ml-pipeline
+  namespace: nexus
+spec:
+  entrypoint: pipeline
+  templates:
+    - name: pipeline
+      steps:
+        - - name: data-validation
+            template: data-validation
+        - - name: quantization
+            template: quantization
+        - - name: model-registration
+            template: model-registration
+        - - name: deployment
+            template: deployment
+
+    - name: data-validation
+      container:
+        image: alpine:3.19
+        command: ["sh", "-c"]
+        args:
+          - "echo '[step] data validation'; sleep 1"
+
+    - name: quantization
+      container:
+        image: alpine:3.19
+        command: ["sh", "-c"]
+        args:
+          - "echo '[step] quantization'; sleep 1"
+
+    - name: model-registration
+      container:
+        image: alpine:3.19
+        command: ["sh", "-c"]
+        args:
+          - "echo '[step] model registration (MLflow)'; sleep 1"
+
+    - name: deployment
+      container:
+        image: alpine:3.19
+        command: ["sh", "-c"]
+        args:
+          - "echo '[step] deployment (KServe/BentoML)'; sleep 1"

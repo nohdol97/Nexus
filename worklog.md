@@ -875,6 +875,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ---
 
+# 작업 기록: Kubeflow 파이프라인 템플릿 추가
+
+## 작업 목적
+- 4단계 첫 단계로, ML 파이프라인의 최소 템플릿을 추가했습니다.
+
+## 변경 파일
+- `mlops/kubeflow/pipeline.yaml`
+- `mlops/README.md`
+
+## 요약
+- 데이터 검증 → 양자화 → 모델 등록 → 배포 순서의 기본 템플릿 추가
+
+---
+
 # 작업 기록: 모델 워커 HPA 추가
 
 ## 작업 목적

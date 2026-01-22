@@ -21,3 +21,9 @@ This folder documents the planned ML pipeline and GitOps flow.
 - Kubeflow 파이프라인 템플릿 추가
 - Argo CD 앱 정의 예시 추가
 - 모델 레지스트리/배포 연동 방식 정리
+
+## Kubeflow 파이프라인 템플릿
+
+```bash
+kubectl apply -f mlops/kubeflow/pipeline.yaml
+```
