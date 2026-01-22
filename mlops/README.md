@@ -33,3 +33,8 @@ kubectl apply -f mlops/kubeflow/pipeline.yaml
 ```bash
 kubectl apply -f mlops/argocd/application.yaml
 ```
+
+## MLflow 레지스트리 연동 정리
+
+- 문서 위치: `mlops/mlflow/README.md`
+- 모델 URI 기준으로 배포 단계와 연결

@@ -190,6 +190,14 @@
   - **왜 필요?** 변경 이력 추적과 자동 배포를 표준화하기 위해.
   - **어디에?** `mlops/argocd/` (Argo CD가 GitOps를 실행).
 
+- **Model Registry(모델 레지스트리)**: 모델 버전과 상태(예: Production)를 관리하는 저장소.
+  - **왜 필요?** 배포 대상을 명확히 하고 추적하기 위해.
+  - **어디에?** `mlops/mlflow/README.md`.
+
+- **Model URI**: 배포에 사용할 모델 버전을 가리키는 식별자.
+  - **왜 필요?** “어떤 모델을 배포할지”를 명확히 지정하기 위해.
+  - **어디에?** `mlops/mlflow/README.md`.
+
 - **kind**: 로컬 PC에서 Kubernetes 클러스터를 빠르게 띄우는 도구.
   - **왜 필요?** 실제 클라우드 없이도 K8s 배포/검증을 하기 위해.
   - **어디에?** `kind create cluster` 로 실행.
@@ -905,6 +913,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - Argo CD에서 Kustomize overlay를 배포할 수 있는 기본 템플릿 제공
+
+---
+
+# 작업 기록: MLflow 레지스트리 연동 문서 추가
+
+## 작업 목적
+- 모델 버전과 배포를 연결하는 기준(모델 URI)을 정리했습니다.
+
+## 변경 파일
+- `mlops/mlflow/README.md`
+- `mlops/README.md`
+
+## 요약
+- `models:/name/version` 형태의 모델 URI를 배포 기준으로 사용
 
 ---
 
