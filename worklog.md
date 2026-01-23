@@ -226,6 +226,10 @@
   - **왜 필요?** 다음 단계가 이전 결과를 참고하기 위해.
   - **어디에?** `mlops/README.md`의 결과물 목록.
 
+- **RBAC(Role-Based Access Control)**: 역할(Role) 기반으로 권한을 제어하는 방식.
+  - **왜 필요?** 누구/어떤 서비스가 어떤 리소스를 조작할 수 있는지 제한하기 위해.
+  - **어디에?** `mlops/argo-workflows/rbac.yaml`.
+
 - **kind**: 로컬 PC에서 Kubernetes 클러스터를 빠르게 띄우는 도구.
   - **왜 필요?** 실제 클라우드 없이도 K8s 배포/검증을 하기 위해.
   - **어디에?** `kind create cluster` 로 실행.
@@ -1168,6 +1172,31 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 ## 요약
 - Argo Workflows 기본 템플릿 추가
 - Airflow는 구조만 먼저 마련
+
+---
+
+# 작업 기록: Argo Workflows RBAC 추가
+
+## 작업 목적
+- Nexus 네임스페이스에서 Workflow 실행 권한을 부여했습니다.
+
+## 변경 파일
+- `mlops/argo-workflows/rbac.yaml`
+- `mlops/argo-workflows/workflow.yaml`
+- `mlops/argo-workflows/README.md`
+
+## 요약
+- `argo-workflow` ServiceAccount와 RoleBinding 추가
+
+---
+
+# 작업 기록: Argo Workflows 로컬 실행 검증
+
+## 작업 목적
+- kind 클러스터에서 Argo Workflows를 설치하고 샘플 워크플로우를 실행했습니다.
+
+## 결과
+- `nexus-batch` 워크플로우가 정상 완료됨
 
 ---
 

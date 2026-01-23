@@ -5,6 +5,7 @@ metadata:
   namespace: nexus
 spec:
   entrypoint: batch
+  serviceAccountName: argo-workflow
   templates:
     - name: batch
       steps:

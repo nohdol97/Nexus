@@ -5,6 +5,7 @@ This folder provides a minimal Argo Workflow template for batch jobs.
 ## Apply (after Argo Workflows is installed)
 
 ```bash
+kubectl apply -f mlops/argo-workflows/rbac.yaml
 kubectl apply -f mlops/argo-workflows/workflow.yaml
 ```
 
