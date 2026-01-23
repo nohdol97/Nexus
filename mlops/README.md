@@ -37,6 +37,12 @@ kubectl apply -f mlops/kubeflow/pipeline.yaml
 - `model_uri.txt`: 배포 기준 모델 URI
 - `kserve_manifest.yaml`: 배포 템플릿(예시)
 
+## GitOps 연계 흐름
+
+- 파이프라인이 `kserve_manifest.yaml`을 생성
+- 해당 파일을 Git에 커밋하면 Argo CD가 자동 동기화
+- 상세 문서: `mlops/gitops/README.md`
+
 ## Argo CD 앱 템플릿
 
 ```bash

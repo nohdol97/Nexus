@@ -190,6 +190,14 @@
   - **왜 필요?** 변경 이력 추적과 자동 배포를 표준화하기 위해.
   - **어디에?** `mlops/argocd/` (Argo CD가 GitOps를 실행).
 
+- **CI(Continuous Integration)**: 코드를 자주 병합하고 자동 테스트/빌드를 수행하는 과정.
+  - **왜 필요?** 버그를 빠르게 발견하고 안정적으로 통합하기 위해.
+  - **어디에?** 향후 CI 파이프라인에서 사용 (예: GitHub Actions).
+
+- **CD(Continuous Delivery/Deployment)**: 빌드된 결과를 자동으로 배포까지 연결하는 과정.
+  - **왜 필요?** 배포 속도를 높이고 수동 오류를 줄이기 위해.
+  - **어디에?** Argo CD 같은 배포 도구/파이프라인에서 수행.
+
 - **Model Registry(모델 레지스트리)**: 모델 버전과 상태(예: Production)를 관리하는 저장소.
   - **왜 필요?** 배포 대상을 명확히 하고 추적하기 위해.
   - **어디에?** `mlops/mlflow/README.md`.
@@ -966,6 +974,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 ## 요약
 - 각 단계가 JSON/텍스트 아티팩트를 생성하도록 구성
 - 배포 단계에서 KServe 템플릿을 파일로 생성
+
+---
+
+# 작업 기록: GitOps 연계 설명 추가
+
+## 작업 목적
+- 파이프라인 결과가 Argo CD 배포로 이어지는 흐름을 문서화했습니다.
+
+## 변경 파일
+- `mlops/gitops/README.md`
+- `mlops/README.md`
+
+## 요약
+- 파이프라인 출력물을 Git에 커밋하면 Argo CD가 동기화하는 흐름 정리
 
 ---
 
