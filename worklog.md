@@ -198,6 +198,18 @@
   - **왜 필요?** “어떤 모델을 배포할지”를 명확히 지정하기 위해.
   - **어디에?** `mlops/mlflow/README.md`.
 
+- **Argo Workflows**: 쿠버네티스 기반 배치 워크플로우 엔진.
+  - **왜 필요?** 데이터 전처리/평가 같은 배치 작업을 단계별로 실행하기 위해.
+  - **어디에?** `mlops/argo-workflows/`.
+
+- **Airflow**: 정기 배치 작업을 스케줄링하는 워크플로우 도구.
+  - **왜 필요?** 재학습/정기 리포트 같은 반복 작업을 관리하기 위해.
+  - **어디에?** `mlops/airflow/`.
+
+- **Scaffolding(스캐폴딩)**: 실제 구현 전에 구조/틀을 먼저 만들어 두는 작업.
+  - **왜 필요?** 팀/프로젝트가 같은 구조를 공유하고, 이후 구현 리스크를 줄이기 위해.
+  - **어디에?** `mlops/`, `k8s/overlays/`, `serving/` 내 템플릿.
+
 - **kind**: 로컬 PC에서 Kubernetes 클러스터를 빠르게 띄우는 도구.
   - **왜 필요?** 실제 클라우드 없이도 K8s 배포/검증을 하기 위해.
   - **어디에?** `kind create cluster` 로 실행.
@@ -927,6 +939,23 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - `models:/name/version` 형태의 모델 URI를 배포 기준으로 사용
+
+---
+
+# 작업 기록: Argo Workflows/Airflow 스캐폴딩 추가
+
+## 작업 목적
+- 배치 워크플로우(Argo)와 스케줄링(Airflow) 구조를 문서화했습니다.
+
+## 변경 파일
+- `mlops/argo-workflows/workflow.yaml`
+- `mlops/argo-workflows/README.md`
+- `mlops/airflow/README.md`
+- `mlops/README.md`
+
+## 요약
+- Argo Workflows 기본 템플릿 추가
+- Airflow는 구조만 먼저 마련
 
 ---
 

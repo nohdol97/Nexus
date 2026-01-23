@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: nexus-batch
+  namespace: nexus
+spec:
+  entrypoint: batch
+  templates:
+    - name: batch
+      steps:
+        - - name: preprocess
+            template: preprocess
+        - - name: evaluate
+            template: evaluate
+
+    - name: preprocess
+      container:
+        image: alpine:3.19
+        command: ["sh", "-c"]
+        args:
+          - "echo '[batch] preprocess'; sleep 1"
+
+    - name: evaluate
+      container:
+        image: alpine:3.19
+        command: ["sh", "-c"]
+        args:
+          - "echo '[batch] evaluate'; sleep 1"

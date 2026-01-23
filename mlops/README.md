@@ -38,3 +38,13 @@ kubectl apply -f mlops/argocd/application.yaml
 
 - 문서 위치: `mlops/mlflow/README.md`
 - 모델 URI 기준으로 배포 단계와 연결
+
+## Argo Workflows 템플릿
+
+```bash
+kubectl apply -f mlops/argo-workflows/workflow.yaml
+```
+
+## Airflow 스캐폴딩
+
+- 위치: `mlops/airflow/README.md`
