@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bentoml-worker
+  namespace: nexus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bentoml-worker
+  template:
+    metadata:
+      labels:
+        app: bentoml-worker
+    spec:
+      containers:
+        - name: bentoml-worker
+          image: nexus-bentoml-worker:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          args:
+            - "serve"
+            - "service.py:NexusBentoService"
+            - "--host"
+            - "0.0.0.0"
+            - "--port"
+            - "3000"
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "512Mi"

@@ -1050,6 +1050,21 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ---
 
+# 작업 기록: BentoML K8s 워커 오버레이 추가
+
+## 작업 목적
+- BentoML 워커를 선택적으로 배포할 수 있도록 K8s 오버레이를 추가했습니다.
+
+## 변경 파일
+- `k8s/overlays/bentoml/`
+- `k8s/README.md`
+- `serving/bentoml/README.md`
+
+## 요약
+- CPU 환경에서 BentoML 워커를 띄우는 선택형 오버레이 제공
+
+---
+
 # 작업 기록: Argo CD 앱 스캐폴딩 추가
 
 ## 작업 목적

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nexus-gateway-config
+  namespace: nexus
+data:
+  GATEWAY_UPSTREAMS: "worker=http://model-worker:8001;bentoml=http://bentoml-worker:3000"
+  GATEWAY_DEFAULT_UPSTREAM: "worker"

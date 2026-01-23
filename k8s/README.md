@@ -14,6 +14,7 @@ Two overlays are provided:
 
 - `k8s/overlays/mock`: CPU-only mock worker (default behavior)
 - `k8s/overlays/gpu`: vLLM GPU worker (requires NVIDIA GPU nodes)
+- `k8s/overlays/bentoml`: BentoML worker (CPU, optional)
 
 Apply one of them like this:
 
@@ -21,12 +22,20 @@ Apply one of them like this:
 kubectl apply -k k8s/overlays/mock
 # or
 kubectl apply -k k8s/overlays/gpu
+# or
+kubectl apply -k k8s/overlays/bentoml
 ```
 
 Optional SGLang worker (GPU):
 
 ```bash
 kubectl apply -k k8s/overlays/gpu/sglang
+```
+
+Optional BentoML worker (CPU):
+
+```bash
+kubectl apply -k k8s/overlays/bentoml
 ```
 
 ## Gateway routing example (vLLM + SGLang)
