@@ -31,6 +31,8 @@ spec:
             template: deployment
         - - name: gitops-commit
             template: gitops-commit
+        - - name: summary-report
+            template: summary-report
 
     - name: data-validation
       container:
@@ -113,6 +115,18 @@ spec:
             value: "main"
           - name: GITOPS_TARGET_PATH
             value: "deployments/kserve/llm-vllm.yaml"
+        volumeMounts:
+          - name: scripts
+            mountPath: /scripts
+          - name: workspace
+            mountPath: /workspace
+
+    - name: summary-report
+      container:
+        image: python:3.12-slim
+        command: ["python"]
+        args:
+          - "/scripts/summary_report.py"
         volumeMounts:
           - name: scripts
             mountPath: /scripts

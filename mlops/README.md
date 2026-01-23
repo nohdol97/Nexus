@@ -37,6 +37,7 @@ kubectl apply -f mlops/kubeflow/pipeline.yaml
 - `model_uri.txt`: 배포 기준 모델 URI
 - `kserve_manifest.yaml`: 배포 템플릿(예시)
 - `gitops/`: GitOps 대상 경로에 복사된 배포 파일 (옵션)
+- `summary.json`: 파이프라인 결과 요약 (옵션)
 
 ## 검증 실패 처리
 

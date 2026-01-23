@@ -958,6 +958,22 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ---
 
+# 작업 기록: 파이프라인 요약 리포트 추가
+
+## 작업 목적
+- 각 단계 결과를 하나의 요약 파일로 묶어 확인하기 쉽게 했습니다.
+
+## 변경 파일
+- `mlops/kubeflow/scripts/summary_report.py`
+- `mlops/kubeflow/scripts-configmap.yaml`
+- `mlops/kubeflow/pipeline.yaml`
+- `mlops/README.md`
+
+## 요약
+- `summary.json`으로 결과 요약을 생성
+
+---
+
 # 작업 기록: MLOps 스캐폴딩 문서 추가
 
 ## 작업 목적

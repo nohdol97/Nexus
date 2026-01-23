@@ -128,3 +128,24 @@ data:
     target_file.write_text(manifest_path.read_text(encoding="utf-8"), encoding="utf-8")
 
     print(f"gitops_target_written={target_file}")
+  summary_report.py: |
+    from __future__ import annotations
+
+    import json
+    from pathlib import Path
+
+    def read_json(path: Path) -> dict:
+        if not path.exists():
+            return {}
+        return json.loads(path.read_text(encoding="utf-8"))
+
+    workspace = Path("/workspace")
+    summary = {
+        "validation": read_json(workspace / "validation.json"),
+        "quantization": read_json(workspace / "quantization_report.json"),
+        "registry": read_json(workspace / "registry.json"),
+    }
+
+    output = workspace / "summary.json"
+    output.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    print(json.dumps(summary))
