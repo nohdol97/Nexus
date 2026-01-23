@@ -22,3 +22,7 @@ Create a lightweight job that:
 - Copies `kserve_manifest.yaml` to the Git repo path
 - Commits & pushes
 - Lets Argo CD reconcile automatically
+
+## Files
+
+- `gitops_commit_step.py`: helper script used by the pipeline (optional)

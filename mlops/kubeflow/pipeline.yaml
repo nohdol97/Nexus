@@ -29,6 +29,8 @@ spec:
             template: model-registration
         - - name: deployment
             template: deployment
+        - - name: gitops-commit
+            template: gitops-commit
 
     - name: data-validation
       container:
@@ -88,6 +90,29 @@ spec:
         env:
           - name: MODEL_URI_FILE
             value: /workspace/model_uri.txt
+        volumeMounts:
+          - name: scripts
+            mountPath: /scripts
+          - name: workspace
+            mountPath: /workspace
+
+    - name: gitops-commit
+      container:
+        image: python:3.12-slim
+        command: ["python"]
+        args:
+          - "/scripts/gitops_commit.py"
+        env:
+          - name: MANIFEST_PATH
+            value: /workspace/kserve_manifest.yaml
+          - name: GITOPS_OUTPUT_DIR
+            value: /workspace/gitops
+          - name: GITOPS_REPO_URL
+            value: ""
+          - name: GITOPS_GIT_REF
+            value: "main"
+          - name: GITOPS_TARGET_PATH
+            value: "deployments/kserve/llm-vllm.yaml"
         volumeMounts:
           - name: scripts
             mountPath: /scripts
