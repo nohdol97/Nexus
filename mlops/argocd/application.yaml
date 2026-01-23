@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/your-org/nexus.git
+    repoURL: https://github.com/nohdol97/Nexus.git
     targetRevision: main
     path: k8s/overlays/mock
   destination:

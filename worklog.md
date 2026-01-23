@@ -1144,6 +1144,17 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ---
 
+# 작업 기록: Argo CD 로컬 설치 및 Application 생성
+
+## 작업 목적
+- kind 환경에서 Argo CD를 설치하고 Application을 생성했습니다.
+
+## 결과
+- `argocd` 네임스페이스에 Argo CD 구성 요소가 올라옴
+- `nexus-gateway` Application 생성 확인
+
+---
+
 # 작업 기록: MLflow 레지스트리 연동 문서 추가
 
 ## 작업 목적
