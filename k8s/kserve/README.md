@@ -24,3 +24,7 @@ kubectl get crd | grep kserve
 
 If KServe is not installed, follow the official installation guide for your cluster.
 This repo does not include KServe install manifests.
+
+## Checklist
+
+- `k8s/kserve/checklist.md`

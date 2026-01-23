@@ -929,6 +929,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ---
 
+# 작업 기록: KServe 배포 체크리스트 추가
+
+## 작업 목적
+- 배포 전/후 확인할 체크리스트를 추가했습니다.
+
+## 변경 파일
+- `k8s/kserve/checklist.md`
+- `k8s/kserve/README.md`
+
+## 요약
+- 설치/적용/검증 단계 체크리스트 제공
+
+---
+
 # 작업 기록: MLOps 스캐폴딩 문서 추가
 
 ## 작업 목적
