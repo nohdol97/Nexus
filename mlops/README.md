@@ -29,6 +29,14 @@ kubectl apply -f mlops/kubeflow/scripts-configmap.yaml
 kubectl apply -f mlops/kubeflow/pipeline.yaml
 ```
 
+## 파이프라인 결과물(예시)
+
+- `validation.json`: 데이터 검증 결과
+- `quantization_report.json`: 양자화 요약
+- `registry.json`: 모델 등록 정보
+- `model_uri.txt`: 배포 기준 모델 URI
+- `kserve_manifest.yaml`: 배포 템플릿(예시)
+
 ## Argo CD 앱 템플릿
 
 ```bash

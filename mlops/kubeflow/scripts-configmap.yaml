@@ -4,38 +4,106 @@ metadata:
   name: nexus-mlops-scripts
   namespace: nexus
 data:
-  data_validation.sh: |
-    #!/bin/sh
-    set -e
-    echo "[step] data validation"
-    DATA_PATH="${DATA_PATH:-/workspace/data}"
-    mkdir -p "$DATA_PATH"
-    echo "sample" > "$DATA_PATH/sample.txt"
-    echo "validation_ok=true" > /workspace/validation.txt
-  quantization.sh: |
-    #!/bin/sh
-    set -e
-    echo "[step] quantization"
-    QUANT_METHOD="${QUANT_METHOD:-none}"
-    echo "quant_method=$QUANT_METHOD" > /workspace/quantization.txt
-  register_model.sh: |
-    #!/bin/sh
-    set -e
-    echo "[step] model registration"
-    MODEL_NAME="${MODEL_NAME:-nexus-llm}"
-    MODEL_VERSION="${MODEL_VERSION:-1}"
-    MODEL_URI="models:/${MODEL_NAME}/${MODEL_VERSION}"
-    MODEL_URI_FILE="${MODEL_URI_FILE:-/workspace/model_uri.txt}"
-    echo "$MODEL_URI" > "$MODEL_URI_FILE"
-    echo "model_uri=$MODEL_URI"
-  deploy_model.sh: |
-    #!/bin/sh
-    set -e
-    echo "[step] deployment"
-    MODEL_URI_FILE="${MODEL_URI_FILE:-/workspace/model_uri.txt}"
-    if [ -f "$MODEL_URI_FILE" ]; then
-      MODEL_URI="$(cat "$MODEL_URI_FILE")"
-    else
-      MODEL_URI="${MODEL_URI:-models:/nexus-llm/1}"
-    fi
-    echo "deploying $MODEL_URI"
+  data_validation.py: |
+    from __future__ import annotations
+
+    import json
+    import os
+    from pathlib import Path
+    from datetime import datetime, timezone
+
+    data_path = Path(os.getenv("DATA_PATH", "/workspace/data"))
+    data_path.mkdir(parents=True, exist_ok=True)
+
+    files = [path for path in data_path.rglob("*") if path.is_file()]
+    if not files:
+        sample = data_path / "sample.txt"
+        sample.write_text("sample\n", encoding="utf-8")
+        files = [sample]
+
+    report = {
+        "status": "ok",
+        "file_count": len(files),
+        "data_path": str(data_path),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+    output_path = Path("/workspace/validation.json")
+    output_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    print(json.dumps(report))
+  quantization.py: |
+    from __future__ import annotations
+
+    import json
+    import os
+    from pathlib import Path
+    from datetime import datetime, timezone
+
+    quant_method = os.getenv("QUANT_METHOD", "none")
+    report = {
+        "status": "ok",
+        "quant_method": quant_method,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+    output_path = Path("/workspace/quantization_report.json")
+    output_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    print(json.dumps(report))
+  register_model.py: |
+    from __future__ import annotations
+
+    import json
+    import os
+    from pathlib import Path
+    from datetime import datetime, timezone
+
+    model_name = os.getenv("MODEL_NAME", "nexus-llm")
+    model_version = os.getenv("MODEL_VERSION", "1")
+    model_uri = f"models:/{model_name}/{model_version}"
+
+    registry = {
+        "model_name": model_name,
+        "model_version": model_version,
+        "model_uri": model_uri,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+    model_uri_file = Path(os.getenv("MODEL_URI_FILE", "/workspace/model_uri.txt"))
+    model_uri_file.write_text(model_uri, encoding="utf-8")
+
+    registry_file = Path("/workspace/registry.json")
+    registry_file.write_text(json.dumps(registry, indent=2), encoding="utf-8")
+    print(json.dumps(registry))
+  deploy_model.py: |
+    from __future__ import annotations
+
+    import os
+    from pathlib import Path
+    from textwrap import dedent
+
+    model_uri_file = Path(os.getenv("MODEL_URI_FILE", "/workspace/model_uri.txt"))
+    if model_uri_file.exists():
+        model_uri = model_uri_file.read_text(encoding="utf-8").strip()
+    else:
+        model_uri = os.getenv("MODEL_URI", "models:/nexus-llm/1")
+
+    manifest = dedent(
+        f"""
+        apiVersion: serving.kserve.io/v1beta1
+        kind: InferenceService
+        metadata:
+          name: llm-vllm
+          namespace: nexus
+        spec:
+          predictor:
+            container:
+              image: vllm/vllm-openai:latest
+              env:
+                - name: MODEL_URI
+                  value: "{model_uri}"
+        """
+    ).strip()
+
+    output_path = Path("/workspace/kserve_manifest.yaml")
+    output_path.write_text(manifest + "\n", encoding="utf-8")
+    print(f"deployment_manifest_written={output_path}")

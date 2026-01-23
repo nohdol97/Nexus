@@ -32,10 +32,10 @@ spec:
 
     - name: data-validation
       container:
-        image: alpine:3.19
-        command: ["sh"]
+        image: python:3.12-slim
+        command: ["python"]
         args:
-          - "/scripts/data_validation.sh"
+          - "/scripts/data_validation.py"
         env:
           - name: DATA_PATH
             value: /workspace/data
@@ -47,10 +47,10 @@ spec:
 
     - name: quantization
       container:
-        image: alpine:3.19
-        command: ["sh"]
+        image: python:3.12-slim
+        command: ["python"]
         args:
-          - "/scripts/quantization.sh"
+          - "/scripts/quantization.py"
         env:
           - name: QUANT_METHOD
             value: "awq"
@@ -62,10 +62,10 @@ spec:
 
     - name: model-registration
       container:
-        image: alpine:3.19
-        command: ["sh"]
+        image: python:3.12-slim
+        command: ["python"]
         args:
-          - "/scripts/register_model.sh"
+          - "/scripts/register_model.py"
         env:
           - name: MODEL_NAME
             value: "nexus-llm"
@@ -81,10 +81,10 @@ spec:
 
     - name: deployment
       container:
-        image: alpine:3.19
-        command: ["sh"]
+        image: python:3.12-slim
+        command: ["python"]
         args:
-          - "/scripts/deploy_model.sh"
+          - "/scripts/deploy_model.py"
         env:
           - name: MODEL_URI_FILE
             value: /workspace/model_uri.txt

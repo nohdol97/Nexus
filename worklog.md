@@ -214,6 +214,10 @@
   - **왜 필요?** 단계 간 결과 파일을 공유하고 재사용하기 위해.
   - **어디에?** `mlops/kubeflow/pipeline.yaml`.
 
+- **Artifact(아티팩트)**: 파이프라인 단계에서 만들어지는 결과 파일.
+  - **왜 필요?** 다음 단계가 이전 결과를 참고하기 위해.
+  - **어디에?** `mlops/README.md`의 결과물 목록.
+
 - **kind**: 로컬 PC에서 Kubernetes 클러스터를 빠르게 띄우는 도구.
   - **왜 필요?** 실제 클라우드 없이도 K8s 배포/검증을 하기 위해.
   - **어디에?** `kind create cluster` 로 실행.
@@ -945,6 +949,23 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 ## 요약
 - ConfigMap으로 스크립트를 마운트하고 각 단계에서 실행
 - `workspace` PVC를 통해 단계 간 결과 파일 공유
+
+---
+
+# 작업 기록: 파이프라인 단계 로직 구체화
+
+## 작업 목적
+- 파이프라인 단계가 실제 결과물을 생성하도록 로직을 보강했습니다.
+
+## 변경 파일
+- `mlops/kubeflow/scripts/`
+- `mlops/kubeflow/scripts-configmap.yaml`
+- `mlops/kubeflow/pipeline.yaml`
+- `mlops/README.md`
+
+## 요약
+- 각 단계가 JSON/텍스트 아티팩트를 생성하도록 구성
+- 배포 단계에서 KServe 템플릿을 파일로 생성
 
 ---
 
