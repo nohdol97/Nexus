@@ -889,6 +889,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ---
 
+# 작업 기록: MLflow 모델 URI → 배포 연결 예시 추가
+
+## 작업 목적
+- MLflow 레지스트리의 모델 URI를 KServe 배포 설정에 연결하는 예시를 추가했습니다.
+
+## 변경 파일
+- `k8s/kserve/inferenceservice.yaml`
+- `k8s/kserve/README.md`
+
+## 요약
+- `MODEL_URI=models:/<name>/<stage>` 형태를 문서화
+
+---
+
 # 작업 기록: MLOps 스캐폴딩 문서 추가
 
 ## 작업 목적

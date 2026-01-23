@@ -7,6 +7,14 @@ spec:
   predictor:
     container:
       image: vllm/vllm-openai:latest
+      env:
+        - name: MODEL_URI
+          value: "models:/nexus-llm/Production"
+        - name: HF_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: model-worker-secrets
+              key: HF_TOKEN
       args:
         - "--model"
         - "meta-llama/Meta-Llama-3-8B-Instruct"
@@ -14,12 +22,6 @@ spec:
         - "0.0.0.0"
         - "--port"
         - "8001"
-      env:
-        - name: HF_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: model-worker-secrets
-              key: HF_TOKEN
       ports:
         - containerPort: 8001
       resources:

@@ -11,3 +11,4 @@ kubectl apply -f k8s/kserve/inferenceservice.yaml
 ## Notes
 - Replace the model ID, image, and resources for your GPU environment.
 - `model-worker-secrets` must include `HF_TOKEN` if the model is gated.
+- `MODEL_URI` should point to the MLflow registry version you want to deploy.
