@@ -14,3 +14,8 @@ This folder is a placeholder for a BentoML-based model worker.
 
 - add `requirements.txt` and `bentofile.yaml`
 - containerize and deploy as a worker if needed
+
+## Files added
+
+- `requirements.txt`
+- `bentofile.yaml`

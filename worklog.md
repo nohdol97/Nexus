@@ -1005,6 +1005,21 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ---
 
+# 작업 기록: BentoML 빌드 파일 추가
+
+## 작업 목적
+- BentoML 서비스 패키징을 위한 기본 파일을 추가했습니다.
+
+## 변경 파일
+- `serving/bentoml/requirements.txt`
+- `serving/bentoml/bentofile.yaml`
+- `serving/bentoml/README.md`
+
+## 요약
+- 최소 의존성과 빌드 설정 스캐폴딩 마련
+
+---
+
 # 작업 기록: Argo CD 앱 스캐폴딩 추가
 
 ## 작업 목적

@@ -1,0 +1,8 @@
+service: "service.py:NexusBentoService"
+labels:
+  project: "nexus"
+include:
+  - "service.py"
+python:
+  packages:
+    - "bentoml>=1.2"
