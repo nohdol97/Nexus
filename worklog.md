@@ -915,6 +915,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ---
 
+# 작업 기록: KServe 설치/적용 흐름 문서화
+
+## 작업 목적
+- KServe 적용에 필요한 전제(설치)와 적용 순서를 문서화했습니다.
+
+## 변경 파일
+- `k8s/kserve/README.md`
+- `mlops/README.md`
+
+## 요약
+- KServe CRD 확인 및 InferenceService 적용 흐름 추가
+
+---
+
 # 작업 기록: MLOps 스캐폴딩 문서 추가
 
 ## 작업 목적

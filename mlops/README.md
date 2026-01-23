@@ -45,6 +45,12 @@ kubectl apply -f mlops/kubeflow/pipeline.yaml
 - 상세 문서: `mlops/gitops/README.md`
 - 파이프라인에서 사용하는 GitOps 스크립트: `mlops/gitops/gitops_commit_step.py`
 
+## KServe 적용 흐름
+
+1) KServe 설치 확인 (CRD 존재 여부)
+2) `k8s/kserve/inferenceservice.yaml` 적용
+3) 상태 확인: `kubectl get inferenceservice -n nexus`
+
 ## Argo CD 앱 템플릿
 
 ```bash
