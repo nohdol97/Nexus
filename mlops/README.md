@@ -44,6 +44,7 @@ kubectl apply -f mlops/kubeflow/pipeline.yaml
 - 해당 파일을 Git에 커밋하면 Argo CD가 자동 동기화
 - 상세 문서: `mlops/gitops/README.md`
 - 파이프라인에서 사용하는 GitOps 스크립트: `mlops/gitops/gitops_commit_step.py`
+- 수동 커밋 예시: `mlops/gitops/commit_example.md`
 
 ## KServe 적용 흐름
 

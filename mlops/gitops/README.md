@@ -26,3 +26,4 @@ Create a lightweight job that:
 ## Files
 
 - `gitops_commit_step.py`: helper script used by the pipeline (optional)
+- `commit_example.md`: manual commit example

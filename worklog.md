@@ -1005,6 +1005,21 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ---
 
+# 작업 기록: GitOps 커밋 예시 추가
+
+## 작업 목적
+- 파이프라인 결과를 Git에 반영하는 수동 커밋 예시를 추가했습니다.
+
+## 변경 파일
+- `mlops/gitops/commit_example.md`
+- `mlops/gitops/README.md`
+- `mlops/README.md`
+
+## 요약
+- GitOps 커밋 예시 명령 추가
+
+---
+
 # 작업 기록: Kubeflow GitOps 커밋 단계(옵션) 추가
 
 ## 작업 목적
