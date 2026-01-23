@@ -11,10 +11,9 @@ def main() -> None:
     data_path.mkdir(parents=True, exist_ok=True)
 
     files = [path for path in data_path.rglob("*") if path.is_file()]
+
     if not files:
-        sample = data_path / "sample.txt"
-        sample.write_text("sample\n", encoding="utf-8")
-        files = [sample]
+        raise RuntimeError("validation failed: no data files found")
 
     report = {
         "status": "ok",

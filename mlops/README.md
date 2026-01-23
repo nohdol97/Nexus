@@ -38,6 +38,11 @@ kubectl apply -f mlops/kubeflow/pipeline.yaml
 - `kserve_manifest.yaml`: 배포 템플릿(예시)
 - `gitops/`: GitOps 대상 경로에 복사된 배포 파일 (옵션)
 
+## 검증 실패 처리
+
+- 데이터 검증 단계가 실패하면 이후 단계는 실행되지 않음
+- 실패 원인은 `validation.json` 대신 에러 로그로 확인
+
 ## GitOps 연계 흐름
 
 - 파이프라인이 `kserve_manifest.yaml`을 생성

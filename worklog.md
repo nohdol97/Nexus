@@ -943,6 +943,21 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ---
 
+# 작업 기록: 검증 실패 시 파이프라인 중단 처리
+
+## 작업 목적
+- 데이터 검증 실패 시 파이프라인이 중단되도록 로직을 강화했습니다.
+
+## 변경 파일
+- `mlops/kubeflow/scripts/data_validation.py`
+- `mlops/kubeflow/scripts-configmap.yaml`
+- `mlops/README.md`
+
+## 요약
+- 데이터 파일이 없으면 `RuntimeError`로 실패 처리
+
+---
+
 # 작업 기록: MLOps 스캐폴딩 문서 추가
 
 ## 작업 목적
