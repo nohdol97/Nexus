@@ -25,6 +25,7 @@ This folder documents the planned ML pipeline and GitOps flow.
 ## Kubeflow 파이프라인 템플릿
 
 ```bash
+kubectl apply -f mlops/kubeflow/scripts-configmap.yaml
 kubectl apply -f mlops/kubeflow/pipeline.yaml
 ```
 

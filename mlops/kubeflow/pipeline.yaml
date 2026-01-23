@@ -5,6 +5,19 @@ metadata:
   namespace: nexus
 spec:
   entrypoint: pipeline
+  volumes:
+    - name: scripts
+      configMap:
+        name: nexus-mlops-scripts
+        defaultMode: 0555
+  volumeClaimTemplates:
+    - metadata:
+        name: workspace
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
   templates:
     - name: pipeline
       steps:
@@ -20,27 +33,63 @@ spec:
     - name: data-validation
       container:
         image: alpine:3.19
-        command: ["sh", "-c"]
+        command: ["sh"]
         args:
-          - "echo '[step] data validation'; sleep 1"
+          - "/scripts/data_validation.sh"
+        env:
+          - name: DATA_PATH
+            value: /workspace/data
+        volumeMounts:
+          - name: scripts
+            mountPath: /scripts
+          - name: workspace
+            mountPath: /workspace
 
     - name: quantization
       container:
         image: alpine:3.19
-        command: ["sh", "-c"]
+        command: ["sh"]
         args:
-          - "echo '[step] quantization'; sleep 1"
+          - "/scripts/quantization.sh"
+        env:
+          - name: QUANT_METHOD
+            value: "awq"
+        volumeMounts:
+          - name: scripts
+            mountPath: /scripts
+          - name: workspace
+            mountPath: /workspace
 
     - name: model-registration
       container:
         image: alpine:3.19
-        command: ["sh", "-c"]
+        command: ["sh"]
         args:
-          - "echo '[step] model registration (MLflow)'; sleep 1"
+          - "/scripts/register_model.sh"
+        env:
+          - name: MODEL_NAME
+            value: "nexus-llm"
+          - name: MODEL_VERSION
+            value: "1"
+          - name: MODEL_URI_FILE
+            value: /workspace/model_uri.txt
+        volumeMounts:
+          - name: scripts
+            mountPath: /scripts
+          - name: workspace
+            mountPath: /workspace
 
     - name: deployment
       container:
         image: alpine:3.19
-        command: ["sh", "-c"]
+        command: ["sh"]
         args:
-          - "echo '[step] deployment (KServe/BentoML)'; sleep 1"
+          - "/scripts/deploy_model.sh"
+        env:
+          - name: MODEL_URI_FILE
+            value: /workspace/model_uri.txt
+        volumeMounts:
+          - name: scripts
+            mountPath: /scripts
+          - name: workspace
+            mountPath: /workspace

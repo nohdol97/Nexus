@@ -210,6 +210,10 @@
   - **왜 필요?** 팀/프로젝트가 같은 구조를 공유하고, 이후 구현 리스크를 줄이기 위해.
   - **어디에?** `mlops/`, `k8s/overlays/`, `serving/` 내 템플릿.
 
+- **PVC(PersistentVolumeClaim)**: Pod가 사용할 영속 스토리지를 요청하는 리소스.
+  - **왜 필요?** 단계 간 결과 파일을 공유하고 재사용하기 위해.
+  - **어디에?** `mlops/kubeflow/pipeline.yaml`.
+
 - **kind**: 로컬 PC에서 Kubernetes 클러스터를 빠르게 띄우는 도구.
   - **왜 필요?** 실제 클라우드 없이도 K8s 배포/검증을 하기 위해.
   - **어디에?** `kind create cluster` 로 실행.
@@ -910,6 +914,23 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - 데이터 검증 → 양자화 → 모델 등록 → 배포 순서의 기본 템플릿 추가
+
+---
+
+# 작업 기록: Kubeflow 파이프라인 단계 스크립트 연결
+
+## 작업 목적
+- 파이프라인 단계별로 실제 실행되는 스크립트를 연결했습니다.
+
+## 변경 파일
+- `mlops/kubeflow/pipeline.yaml`
+- `mlops/kubeflow/scripts-configmap.yaml`
+- `mlops/kubeflow/scripts/`
+- `mlops/README.md`
+
+## 요약
+- ConfigMap으로 스크립트를 마운트하고 각 단계에서 실행
+- `workspace` PVC를 통해 단계 간 결과 파일 공유
 
 ---
 

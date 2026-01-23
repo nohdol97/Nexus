@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nexus-mlops-scripts
+  namespace: nexus
+data:
+  data_validation.sh: |
+    #!/bin/sh
+    set -e
+    echo "[step] data validation"
+    DATA_PATH="${DATA_PATH:-/workspace/data}"
+    mkdir -p "$DATA_PATH"
+    echo "sample" > "$DATA_PATH/sample.txt"
+    echo "validation_ok=true" > /workspace/validation.txt
+  quantization.sh: |
+    #!/bin/sh
+    set -e
+    echo "[step] quantization"
+    QUANT_METHOD="${QUANT_METHOD:-none}"
+    echo "quant_method=$QUANT_METHOD" > /workspace/quantization.txt
+  register_model.sh: |
+    #!/bin/sh
+    set -e
+    echo "[step] model registration"
+    MODEL_NAME="${MODEL_NAME:-nexus-llm}"
+    MODEL_VERSION="${MODEL_VERSION:-1}"
+    MODEL_URI="models:/${MODEL_NAME}/${MODEL_VERSION}"
+    MODEL_URI_FILE="${MODEL_URI_FILE:-/workspace/model_uri.txt}"
+    echo "$MODEL_URI" > "$MODEL_URI_FILE"
+    echo "model_uri=$MODEL_URI"
+  deploy_model.sh: |
+    #!/bin/sh
+    set -e
+    echo "[step] deployment"
+    MODEL_URI_FILE="${MODEL_URI_FILE:-/workspace/model_uri.txt}"
+    if [ -f "$MODEL_URI_FILE" ]; then
+      MODEL_URI="$(cat "$MODEL_URI_FILE")"
+    else
+      MODEL_URI="${MODEL_URI:-models:/nexus-llm/1}"
+    fi
+    echo "deploying $MODEL_URI"
