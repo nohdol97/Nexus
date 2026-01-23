@@ -991,6 +991,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ---
 
+# 작업 기록: BentoML 워커 예시 추가
+
+## 작업 목적
+- BentoML 기반 워커의 최소 동작 예시를 추가했습니다.
+
+## 변경 파일
+- `serving/bentoml/service.py`
+- `serving/bentoml/README.md`
+
+## 요약
+- 간단한 JSON 입력/출력 형태로 응답하는 mock 서비스 제공
+
+---
+
 # 작업 기록: Argo CD 앱 스캐폴딩 추가
 
 ## 작업 목적
