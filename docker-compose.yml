@@ -27,3 +27,12 @@ services:
       - ./ops/grafana/provisioning:/etc/grafana/provisioning:ro
     depends_on:
       - prometheus
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./ops/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    depends_on:
+      - prometheus

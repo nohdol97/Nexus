@@ -186,6 +186,18 @@
   - **왜 필요?** 에러율/지연시간 같은 지표를 계산하기 위해.
   - **어디에?** `ops/prometheus_alerts.yml`의 alert 조건.
 
+- **Alertmanager**: Prometheus 알림을 받아 전달/라우팅하는 서비스.
+  - **왜 필요?** 알림을 Slack/Email/Webhook 등으로 보낼 수 있게 하기 위해.
+  - **어디에?** `ops/alertmanager.yml`, `docker-compose.yml`.
+
+- **Receiver(수신자)**: Alertmanager가 알림을 전달하는 대상.
+  - **왜 필요?** 알림을 어디로 보낼지 설정하기 위해.
+  - **어디에?** `ops/alertmanager.yml`.
+
+- **Webhook(웹훅)**: HTTP로 알림을 전달하는 방식.
+  - **왜 필요?** 외부 시스템으로 알림을 전달하기 위해.
+  - **어디에?** `ops/alertmanager.yml`의 예시 설정.
+
 - **Port Forward(포트 포워딩)**: 클러스터 내부 서비스를 로컬에서 여는 방법.
   - **왜 필요?** 로컬에서 UI나 API에 접속하기 위해.
   - **어디에?** `kubectl port-forward` 명령으로 사용.
@@ -1537,3 +1549,34 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - 워크로드/지표/파라미터/결과 요약 형식 제공
+
+---
+
+# 작업 기록: Alertmanager 스캐폴딩 추가
+
+## 작업 목적
+- Prometheus 알림을 수신/라우팅할 Alertmanager를 로컬에 연결했습니다.
+
+## 변경 파일
+- `ops/alertmanager.yml`
+- `ops/alerts/README.md`
+- `ops/prometheus.yml`
+- `docker-compose.yml`
+
+## 요약
+- Alertmanager 기본 설정 파일 추가
+- Prometheus가 Alertmanager로 알림을 전달하도록 연결
+
+---
+
+# 작업 기록: Alertmanager 로컬 구동
+
+## 작업 목적
+- 로컬에서 Alertmanager를 실행하고 Prometheus 재시작으로 연동을 반영했습니다.
+
+## 변경 파일
+- 없음 (컨테이너 실행만 수행)
+
+## 요약
+- `alertmanager` 컨테이너 시작
+- Prometheus 재시작으로 alerting 설정 반영
