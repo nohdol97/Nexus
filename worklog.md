@@ -146,6 +146,14 @@
   - **왜 필요?** 누구나 동일한 절차로 빠르게 복구하기 위해.
   - **어디에?** `ops/slo_runbook.md`.
 
+- **Alert Rule(알림 규칙)**: 지표가 기준을 넘으면 알림을 발생시키는 조건.
+  - **왜 필요?** 장애 징후를 빠르게 감지하기 위해.
+  - **어디에?** `ops/prometheus_alerts.yml`.
+
+- **PromQL**: Prometheus 지표를 조회/계산하는 쿼리 언어.
+  - **왜 필요?** 에러율/지연시간 같은 지표를 계산하기 위해.
+  - **어디에?** `ops/prometheus_alerts.yml`의 alert 조건.
+
 - **Port Forward(포트 포워딩)**: 클러스터 내부 서비스를 로컬에서 여는 방법.
   - **왜 필요?** 로컬에서 UI나 API에 접속하기 위해.
   - **어디에?** `kubectl port-forward` 명령으로 사용.
@@ -1398,3 +1406,32 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - Runbook 항목 설명(증상/확인/완화)을 추가
+
+---
+
+# 작업 기록: Prometheus 알림 규칙 추가
+
+## 작업 목적
+- SLO 초안을 기반으로 Prometheus 알림 규칙을 추가했습니다.
+
+## 변경 파일
+- `ops/prometheus_alerts.yml`
+- `ops/prometheus.yml`
+- `docker-compose.yml`
+
+## 요약
+- Gateway 다운, 에러율/지연시간/레이트리밋/업스트림 오류 알림 추가
+- Prometheus가 알림 규칙 파일을 읽도록 설정
+
+---
+
+# 작업 기록: PromQL 알림 식 설명 주석 추가
+
+## 작업 목적
+- Prometheus 알림 규칙의 expr를 한글 주석으로 이해하기 쉽게 보강했습니다.
+
+## 변경 파일
+- `ops/prometheus_alerts.yml`
+
+## 요약
+- 각 알림의 expr 바로 아래에 의미 설명 주석 추가

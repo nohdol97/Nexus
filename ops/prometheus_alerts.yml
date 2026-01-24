@@ -1,0 +1,76 @@
+groups:
+  - name: nexus.gateway.rules
+    rules:
+      - alert: GatewayDown
+        expr: up{job="gateway"} == 0
+        # 의미: Prometheus가 gateway 메트릭을 가져오지 못하면(Down) 경고
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Gateway is down"
+          description: "Prometheus cannot scrape the gateway metrics endpoint for 1 minute."
+
+      - alert: GatewayHighErrorRate
+        expr: |
+          sum(rate(gateway_requests_total{status=~"5.."}[5m]))
+          /
+          clamp_min(sum(rate(gateway_requests_total[5m])), 1)
+          > 0.01
+        # 의미: 최근 5분 5xx 비율이 1%를 넘으면 경고
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High 5xx error rate"
+          description: "5xx ratio exceeded 1% over 5 minutes."
+
+      - alert: GatewayHighLatencyP95
+        expr: |
+          histogram_quantile(0.95, sum(rate(gateway_request_latency_seconds_bucket[5m])) by (le))
+          > 1
+        # 의미: 최근 5분 p95 지연시간이 1초를 넘으면 경고
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High latency p95"
+          description: "p95 latency exceeded 1s over 5 minutes."
+
+      - alert: GatewayCircuitBreakerOpen
+        expr: increase(gateway_circuit_open_total[10m]) > 5
+        # 의미: 10분 동안 회로차단 이벤트가 5회 초과 시 경고
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Circuit breaker opened frequently"
+          description: "More than 5 circuit breaker events in 10 minutes."
+
+      - alert: GatewayRateLimitSpike
+        expr: |
+          sum(rate(gateway_rate_limited_total[5m]))
+          /
+          clamp_min(sum(rate(gateway_requests_total[5m])), 1)
+          > 0.05
+        # 의미: 최근 10분 동안 rate limit 비율이 5% 초과 시 경고
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Rate limiting spike"
+          description: "Rate limited requests exceeded 5% over 10 minutes."
+
+      - alert: UpstreamErrorRateHigh
+        expr: |
+          sum(rate(gateway_upstream_requests_total{status="error"}[5m]))
+          /
+          clamp_min(sum(rate(gateway_upstream_requests_total[5m])), 1)
+          > 0.02
+        # 의미: 업스트림 오류 비율이 2% 초과하면 경고
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Upstream error rate high"
+          description: "Upstream errors exceeded 2% over 5 minutes."
