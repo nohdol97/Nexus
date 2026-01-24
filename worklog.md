@@ -118,6 +118,10 @@
   - **왜 필요?** Kibana 설정을 API로 생성/관리하기 위해.
   - **어디에?** `ops/logging/bootstrap_kibana.sh`에서 조회 API 사용.
 
+- **KQL(Kibana Query Language)**: Kibana에서 로그를 검색하기 위한 쿼리 문법.
+  - **왜 필요?** 에러/지연/업스트림 등 원하는 로그를 빠르게 찾기 위해.
+  - **어디에?** `ops/logging/kibana_queries.md`.
+
 - **Source/Sink(소스/싱크)**: Vector 파이프라인의 입력/출력 지점.
   - **왜 필요?** 어디서 로그를 읽고 어디로 보낼지 분리해 설정하기 위해.
   - **어디에?** `vector-to-kafka.toml`, `kafka-to-es.toml`에서 정의.
@@ -1468,3 +1472,17 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - Kibana 설명에 “Elasticsearch 로그를 웹에서 검색/필터링” 의미 추가
+
+---
+
+# 작업 기록: Kibana KQL 쿼리 템플릿 추가
+
+## 작업 목적
+- Kibana에서 바로 사용할 수 있는 검색 템플릿(KQL)을 정리했습니다.
+
+## 변경 파일
+- `ops/logging/kibana_queries.md`
+- `ops/logging/README.md`
+
+## 요약
+- 에러/지연/업스트림/요청 추적용 기본 쿼리 예시 제공

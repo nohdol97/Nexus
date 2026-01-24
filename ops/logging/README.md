@@ -23,3 +23,4 @@ docker compose -f docker-compose.yml -f docker-compose.logging.yml up -d
   ```bash
   ./ops/logging/bootstrap_kibana.sh
   ```
+- Query templates: `ops/logging/kibana_queries.md`
