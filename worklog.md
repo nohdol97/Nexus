@@ -78,6 +78,34 @@
   - **왜 필요?** 장애 원인을 추적하기 위해.
   - **어디에?** JSON 형태로 표준 출력.
 
+- **Kafka**: 로그/이벤트를 안전하게 모아두는 메시지 스트림.
+  - **왜 필요?** 대량 로그를 한 번에 받고 다른 시스템으로 전달하기 위해.
+  - **어디에?** `docker-compose.logging.yml`의 `kafka` 서비스.
+
+- **Elasticsearch**: 로그를 저장·검색하는 데이터베이스.
+  - **왜 필요?** 로그를 빠르게 검색하고 필터링하기 위해.
+  - **어디에?** `docker-compose.logging.yml`의 `elasticsearch` 서비스.
+
+- **Kibana**: Elasticsearch에 저장된 로그를 화면으로 보는 도구.
+  - **왜 필요?** 로그를 시각적으로 탐색/분석하기 위해.
+  - **어디에?** `docker-compose.logging.yml`의 `kibana` 서비스.
+
+- **Vector**: 로그 수집/전달 에이전트.
+  - **왜 필요?** 로그를 Kafka로 보내거나 Elasticsearch로 적재하기 위해.
+  - **어디에?** `ops/logging/vector-to-kafka.toml`, `ops/logging/kafka-to-es.toml`.
+
+- **Log Pipeline(로그 파이프라인)**: 로그가 이동하는 전체 흐름.
+  - **왜 필요?** 수집 → 전달 → 저장 → 조회 흐름을 표준화하기 위해.
+  - **어디에?** `ops/logging/README.md` 문서.
+
+- **Port Forward(포트 포워딩)**: 클러스터 내부 서비스를 로컬에서 여는 방법.
+  - **왜 필요?** 로컬에서 UI나 API에 접속하기 위해.
+  - **어디에?** `kubectl port-forward` 명령으로 사용.
+
+- **KFP(Kubeflow Pipelines)**: Kubeflow 내 파이프라인 실행 엔진.
+  - **왜 필요?** 모델 학습/검증/배포 단계를 자동화하기 위해.
+  - **어디에?** Kubeflow 설치 시 동작하는 핵심 컴포넌트.
+
 - **Docker/Compose**: 여러 서비스를 한 번에 실행하는 도구.
   - **왜 필요?** Gateway + Prometheus + Grafana를 쉽게 실행.
   - **어디에?** `docker-compose.yml` 사용.
@@ -1245,3 +1273,35 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 - vLLM으로 **성능/운영 효율**을 확보하고,
 - SGLang은 **특수한 고급 제어**가 필요한 경우에만 사용해 복잡도를 최소화,
 - Triton은 **LLM 외 모델 통합 요구가 생길 때** 도입하는 방식으로 단계적 접근.
+
+---
+
+# 작업 기록: Kubeflow 로컬 검증 후 종료
+
+## 작업 목적
+- KFP 스모크 테스트 완료 후 로컬 리소스를 정리해 시스템 부담을 줄였습니다.
+
+## 변경 파일
+- 없음 (클러스터 리소스만 정리)
+
+## 요약
+- `kubectl port-forward` 중지
+- KFP 매니페스트 삭제로 `kubeflow` 네임스페이스 제거
+
+---
+
+# 작업 기록: 로그 파이프라인 스캐폴딩 추가 (Kafka → Elasticsearch → Kibana)
+
+## 작업 목적
+- 게이트웨이 구조화 로그를 Kafka로 수집하고 Elasticsearch/Kibana로 조회하는 흐름을 준비했습니다.
+
+## 변경 파일
+- `docker-compose.logging.yml`
+- `ops/logging/README.md`
+- `ops/logging/vector-to-kafka.toml`
+- `ops/logging/kafka-to-es.toml`
+
+## 요약
+- Vector가 Docker 로그를 읽어 Kafka `gateway-logs` 토픽으로 전달
+- 다른 Vector 인스턴스가 Kafka 로그를 Elasticsearch로 적재
+- Kibana에서 `gateway-logs-*` 인덱스로 조회 가능

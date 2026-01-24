@@ -1,0 +1,28 @@
+data_dir = "/vector-data-dir"
+
+[sources.docker_logs]
+type = "docker_logs"
+include_labels = { "com.docker.compose.service" = "gateway" }
+
+[transforms.normalize]
+type = "remap"
+inputs = ["docker_logs"]
+source = '''
+meta = {
+  "container_name": .container_name,
+  "timestamp": .timestamp
+}
+parsed, err = parse_json(.message)
+if err == null {
+  . = merge(meta, parsed)
+} else {
+  . = merge(meta, {"message": .message})
+}
+'''
+
+[sinks.kafka]
+type = "kafka"
+inputs = ["normalize"]
+bootstrap_servers = "kafka:9092"
+topic = "gateway-logs"
+encoding.codec = "json"

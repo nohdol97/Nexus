@@ -1,0 +1,16 @@
+data_dir = "/vector-data-dir"
+
+[sources.kafka]
+type = "kafka"
+bootstrap_servers = "kafka:9092"
+group_id = "vector-elasticsearch"
+topics = ["gateway-logs"]
+decoding.codec = "json"
+
+[sinks.elasticsearch]
+type = "elasticsearch"
+inputs = ["kafka"]
+endpoint = "http://elasticsearch:9200"
+index = "gateway-logs-%Y.%m.%d"
+mode = "bulk"
+compression = "gzip"
