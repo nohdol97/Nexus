@@ -126,6 +126,26 @@
   - **왜 필요?** 수집 → 전달 → 저장 → 조회 흐름을 표준화하기 위해.
   - **어디에?** `ops/logging/README.md` 문서.
 
+- **SLI(Service Level Indicator)**: 서비스 품질을 수치로 측정하는 지표.
+  - **왜 필요?** 신뢰성/성능을 숫자로 판단하기 위해.
+  - **어디에?** Prometheus 메트릭으로 계산.
+
+- **SLO(Service Level Objective)**: SLI에 대한 목표값.
+  - **왜 필요?** 운영 기준선을 명확히 하기 위해.
+  - **어디에?** `ops/slo_runbook.md`에 정의.
+
+- **SLA(Service Level Agreement)**: 외부 고객과 합의한 보장 수준.
+  - **왜 필요?** 사업/계약 기준으로 품질을 약속하기 위해.
+  - **어디에?** 실제 계약/정책 문서(현재는 내부 기준만).
+
+- **Error Budget(에러 예산)**: SLO에서 허용하는 실패 범위.
+  - **왜 필요?** 장애 허용치 안에서 실험/변경을 관리하기 위해.
+  - **어디에?** SLO 계산 결과로 산출.
+
+- **Runbook(런북)**: 장애 대응 절차를 정리한 문서.
+  - **왜 필요?** 누구나 동일한 절차로 빠르게 복구하기 위해.
+  - **어디에?** `ops/slo_runbook.md`.
+
 - **Port Forward(포트 포워딩)**: 클러스터 내부 서비스를 로컬에서 여는 방법.
   - **왜 필요?** 로컬에서 UI나 API에 접속하기 위해.
   - **어디에?** `kubectl port-forward` 명령으로 사용.
@@ -1351,3 +1371,30 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 - Vector 설정 오류 수정(필터/VRL/Elasticsearch sink)
 - 게이트웨이 로그가 Kafka 토픽에 적재되고 Elasticsearch 인덱스가 생성되는 것 확인
 - Kibana 데이터 뷰(`gateway-logs-*`) 생성 완료
+
+---
+
+# 작업 기록: SLO/Runbook 문서 초안 추가
+
+## 작업 목적
+- 게이트웨이 및 로그 파이프라인 운영 기준(SLO)과 장애 대응 절차(Runbook)를 문서화했습니다.
+
+## 변경 파일
+- `ops/slo_runbook.md`
+
+## 요약
+- 초기 SLO/SLI 기준과 알람 예시 정리
+- 장애 유형별 확인 절차/복구 방법 정리
+
+---
+
+# 작업 기록: Runbook 용어 설명 보강
+
+## 작업 목적
+- Runbook 내 용어(Symptoms/Checks/Mitigation)를 한글로 이해하기 쉽게 설명했습니다.
+
+## 변경 파일
+- `ops/slo_runbook.md`
+
+## 요약
+- Runbook 항목 설명(증상/확인/완화)을 추가
