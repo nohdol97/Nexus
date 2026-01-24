@@ -2,22 +2,22 @@ data_dir = "/vector-data-dir"
 
 [sources.docker_logs]
 type = "docker_logs"
-include_labels = { "com.docker.compose.service" = "gateway" }
+include_labels = ["com.docker.compose.service=gateway"]
 
 [transforms.normalize]
 type = "remap"
 inputs = ["docker_logs"]
 source = '''
-meta = {
-  "container_name": .container_name,
-  "timestamp": .timestamp
-}
+container = .container_name
+ts = .timestamp
 parsed, err = parse_json(.message)
-if err == null {
-  . = merge(meta, parsed)
+if err == null && is_object(parsed) {
+  . = parsed
 } else {
-  . = merge(meta, {"message": .message})
+  . = {"message": .message}
 }
+.container_name = container
+.timestamp = ts
 '''
 
 [sinks.kafka]

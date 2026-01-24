@@ -94,6 +94,34 @@
   - **왜 필요?** 로그를 Kafka로 보내거나 Elasticsearch로 적재하기 위해.
   - **어디에?** `ops/logging/vector-to-kafka.toml`, `ops/logging/kafka-to-es.toml`.
 
+- **Zookeeper(주키퍼)**: Kafka 같은 분산 시스템의 상태/구성을 관리하는 코디네이터.
+  - **왜 필요?** Kafka 클러스터가 안정적으로 동작하도록 보조하기 위해.
+  - **어디에?** `docker-compose.logging.yml`의 `zookeeper` 서비스.
+
+- **Confluent**: Kafka를 운영/배포하기 쉽게 만든 배포판(이미지 제공).
+  - **왜 필요?** 로컬에서 Kafka를 빠르게 띄우기 위해.
+  - **어디에?** `docker-compose.logging.yml`의 Kafka 이미지.
+
+- **Topic(토픽)**: Kafka에서 메시지를 모아두는 “채널”.
+  - **왜 필요?** 로그/이벤트를 종류별로 분리해 전달하기 위해.
+  - **어디에?** `gateway-logs` 토픽.
+
+- **Index(인덱스)**: Elasticsearch에 저장되는 로그 묶음(테이블 같은 개념).
+  - **왜 필요?** 날짜/종류별로 로그를 빠르게 조회하기 위해.
+  - **어디에?** `gateway-logs-YYYY.MM.DD` 형태로 생성.
+
+- **Data View(데이터 뷰)**: Kibana에서 인덱스를 쉽게 탐색하기 위한 보기 설정.
+  - **왜 필요?** Kibana에서 필드/시간 기준으로 로그를 조회하기 위해.
+  - **어디에?** `gateway-logs-*` 데이터 뷰.
+
+- **Source/Sink(소스/싱크)**: Vector 파이프라인의 입력/출력 지점.
+  - **왜 필요?** 어디서 로그를 읽고 어디로 보낼지 분리해 설정하기 위해.
+  - **어디에?** `vector-to-kafka.toml`, `kafka-to-es.toml`에서 정의.
+
+- **VRL(Vector Remap Language)**: Vector에서 로그를 변환하는 스크립트 언어.
+  - **왜 필요?** 로그 형식을 정규화하거나 필드를 추가/변형하기 위해.
+  - **어디에?** `vector-to-kafka.toml`의 `remap` 블록.
+
 - **Log Pipeline(로그 파이프라인)**: 로그가 이동하는 전체 흐름.
   - **왜 필요?** 수집 → 전달 → 저장 → 조회 흐름을 표준화하기 위해.
   - **어디에?** `ops/logging/README.md` 문서.
@@ -1305,3 +1333,21 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 - Vector가 Docker 로그를 읽어 Kafka `gateway-logs` 토픽으로 전달
 - 다른 Vector 인스턴스가 Kafka 로그를 Elasticsearch로 적재
 - Kibana에서 `gateway-logs-*` 인덱스로 조회 가능
+
+---
+
+# 작업 기록: 로그 파이프라인 로컬 실행 검증 및 설정 보완
+
+## 작업 목적
+- Kafka → Elasticsearch → Kibana 경로가 실제로 동작하는지 로컬에서 검증했습니다.
+
+## 변경 파일
+- `docker-compose.logging.yml`
+- `ops/logging/vector-to-kafka.toml`
+- `ops/logging/kafka-to-es.toml`
+
+## 요약
+- Kafka 이미지를 Confluent 기반으로 교체하고 Zookeeper를 추가
+- Vector 설정 오류 수정(필터/VRL/Elasticsearch sink)
+- 게이트웨이 로그가 Kafka 토픽에 적재되고 Elasticsearch 인덱스가 생성되는 것 확인
+- Kibana 데이터 뷰(`gateway-logs-*`) 생성 완료

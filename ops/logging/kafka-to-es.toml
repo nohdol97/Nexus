@@ -11,6 +11,6 @@ decoding.codec = "json"
 type = "elasticsearch"
 inputs = ["kafka"]
 endpoint = "http://elasticsearch:9200"
-index = "gateway-logs-%Y.%m.%d"
 mode = "bulk"
 compression = "gzip"
+bulk.index = "gateway-logs-%Y.%m.%d"
