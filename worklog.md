@@ -226,6 +226,14 @@
   - **왜 필요?** 외부 시스템으로 알림을 전달하기 위해.
   - **어디에?** `ops/alertmanager.yml`의 예시 설정.
 
+- **Slack Webhook(슬랙 웹훅)**: Slack으로 알림을 보내는 URL 기반 방식.
+  - **왜 필요?** 팀 채널로 즉시 알림을 전달하기 위해.
+  - **어디에?** `ops/alerts/receiver_templates.md`.
+
+- **SMTP**: 이메일 발송 서버 프로토콜.
+  - **왜 필요?** 이메일로 알림을 전송하기 위해.
+  - **어디에?** `ops/alerts/receiver_templates.md`.
+
 - **Contact Point(연락처)**: Grafana 알림이 전달될 대상 설정.
   - **왜 필요?** 알림을 외부 시스템으로 보내기 위해.
   - **어디에?** `ops/grafana/provisioning/alerting/contact-points.yml`.
@@ -1633,6 +1641,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 ## 요약
 - Alertmanager로 전송하는 기본 Webhook Contact Point 추가
 - 기본 Notification Policy 추가
+
+---
+
+# 작업 기록: Alertmanager 수신자 템플릿 추가
+
+## 작업 목적
+- Slack/Email/Webhook 수신자 템플릿을 정리했습니다.
+
+## 변경 파일
+- `ops/alerts/receiver_templates.md`
+- `ops/alerts/README.md`
+
+## 요약
+- Slack Webhook, SMTP 예시 추가
 
 ---
 

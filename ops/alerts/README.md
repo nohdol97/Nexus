@@ -31,3 +31,6 @@ Then restart alertmanager:
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.logging.yml restart alertmanager
 ```
+
+## Templates
+- `ops/alerts/receiver_templates.md`
