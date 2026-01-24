@@ -88,7 +88,7 @@
 
 - **Kibana**: Elasticsearch에 저장된 로그를 화면으로 보는 도구.
   - **왜 필요?** 로그를 시각적으로 탐색/분석하기 위해.
-  - **어디에?** `docker-compose.logging.yml`의 `kibana` 서비스.
+  - **어디에?** `docker-compose.logging.yml`의 `kibana` 서비스. (Elasticsearch 로그를 웹에서 검색/필터링)
 
 - **Vector**: 로그 수집/전달 에이전트.
   - **왜 필요?** 로그를 Kafka로 보내거나 Elasticsearch로 적재하기 위해.
@@ -113,6 +113,10 @@
 - **Data View(데이터 뷰)**: Kibana에서 인덱스를 쉽게 탐색하기 위한 보기 설정.
   - **왜 필요?** Kibana에서 필드/시간 기준으로 로그를 조회하기 위해.
   - **어디에?** `gateway-logs-*` 데이터 뷰.
+
+- **Saved Object(저장 객체)**: Kibana 설정(데이터 뷰, 대시보드 등)을 저장하는 내부 단위.
+  - **왜 필요?** Kibana 설정을 API로 생성/관리하기 위해.
+  - **어디에?** `ops/logging/bootstrap_kibana.sh`에서 조회 API 사용.
 
 - **Source/Sink(소스/싱크)**: Vector 파이프라인의 입력/출력 지점.
   - **왜 필요?** 어디서 로그를 읽고 어디로 보낼지 분리해 설정하기 위해.
@@ -1435,3 +1439,32 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - 각 알림의 expr 바로 아래에 의미 설명 주석 추가
+
+---
+
+# 작업 기록: Kibana 데이터 뷰 자동 생성 스크립트 추가
+
+## 작업 목적
+- Kibana 데이터 뷰를 수동 설정 없이 생성할 수 있도록 스크립트를 추가했습니다.
+
+## 변경 파일
+- `ops/logging/bootstrap_kibana.sh`
+- `ops/logging/README.md`
+
+## 요약
+- Kibana Saved Objects API로 데이터 뷰 존재 여부 확인
+- 없으면 `gateway-logs-*` 데이터 뷰 생성
+
+---
+
+# 작업 기록: Kibana 설명 보강
+
+## 작업 목적
+- Kibana가 무엇인지와 어디에 쓰는지 설명을 보강했습니다.
+
+## 변경 파일
+- `ops/slo_runbook.md`
+- `worklog.md`
+
+## 요약
+- Kibana 설명에 “Elasticsearch 로그를 웹에서 검색/필터링” 의미 추가

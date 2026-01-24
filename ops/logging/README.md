@@ -18,4 +18,8 @@ docker compose -f docker-compose.yml -f docker-compose.logging.yml up -d
 
 - Vector reads Docker logs from containers labeled `com.docker.compose.service=gateway`.
 - Logs flow: Vector (docker logs) -> Kafka topic `gateway-logs` -> Vector -> Elasticsearch.
-- Kibana uses the `gateway-logs-*` index pattern.
+- Kibana uses the `gateway-logs-*` data view.
+- Create the data view automatically:
+  ```bash
+  ./ops/logging/bootstrap_kibana.sh
+  ```

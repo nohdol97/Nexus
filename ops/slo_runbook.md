@@ -22,7 +22,7 @@
   - `gateway_circuit_open_total`
   - `gateway_fallback_used_total`
 - Logs: Elasticsearch index `gateway-logs-YYYY.MM.DD`
-- UI: Grafana (metrics), Kibana (logs)
+- UI: Grafana (metrics), Kibana (logs, Elasticsearch 데이터를 웹으로 조회/검색)
 
 ## Initial SLOs (tune later)
 
