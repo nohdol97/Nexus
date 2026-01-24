@@ -126,6 +126,26 @@
   - **왜 필요?** 지표 이상 원인을 로그에서 빠르게 찾기 위해.
   - **어디에?** `ops/logging/correlation_guide.md`.
 
+- **Throughput(TPS, 처리량)**: 초당 처리 가능한 요청 수.
+  - **왜 필요?** 시스템이 얼마나 많은 요청을 감당하는지 판단하기 위해.
+  - **어디에?** `ops/perf_tuning_report.md` 지표 항목.
+
+- **Latency Percentile(p50/p95/p99)**: 지연시간 분포의 분위수.
+  - **왜 필요?** 평균이 아닌 “느린 요청” 구간을 파악하기 위해.
+  - **어디에?** `ops/perf_tuning_report.md` 지표 항목.
+
+- **Batch Size(배치 크기)**: 한 번에 처리하는 요청 묶음 크기.
+  - **왜 필요?** 처리량과 지연시간의 균형을 조절하기 위해.
+  - **어디에?** `ops/perf_tuning_report.md` 파라미터 항목.
+
+- **Concurrency(동시성)**: 동시에 처리하는 요청 수.
+  - **왜 필요?** 부하 상황에서 성능을 재현하기 위해.
+  - **어디에?** `ops/perf_tuning_report.md` 워크로드 항목.
+
+- **GPU Utilization(자원 사용률)**: GPU가 사용되는 비율.
+  - **왜 필요?** 성능 최적화와 병목 원인을 확인하기 위해.
+  - **어디에?** `ops/perf_tuning_report.md` 지표 항목.
+
 - **Source/Sink(소스/싱크)**: Vector 파이프라인의 입력/출력 지점.
   - **왜 필요?** 어디서 로그를 읽고 어디로 보낼지 분리해 설정하기 위해.
   - **어디에?** `vector-to-kafka.toml`, `kafka-to-es.toml`에서 정의.
@@ -1504,3 +1524,16 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - 에러율/지연/업스트림 오류/레이트리밋/회로차단 상황별 점검 흐름 정리
+
+---
+
+# 작업 기록: 성능 튜닝 리포트 템플릿 추가
+
+## 작업 목적
+- vLLM 성능 튜닝 결과를 기록할 수 있는 템플릿을 추가했습니다.
+
+## 변경 파일
+- `ops/perf_tuning_report.md`
+
+## 요약
+- 워크로드/지표/파라미터/결과 요약 형식 제공
