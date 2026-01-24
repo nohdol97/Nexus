@@ -130,6 +130,10 @@
   - **왜 필요?** 장애 상황을 빠르게 한눈에 파악하기 위해.
   - **어디에?** `ops/logging/kibana_dashboard.md`.
 
+- **Saved Query(저장 쿼리)**: Kibana에서 재사용할 수 있는 검색 쿼리.
+  - **왜 필요?** 자주 쓰는 로그 필터를 반복 입력하지 않기 위해.
+  - **어디에?** `ops/logging/bootstrap_kibana_saved_objects.sh`.
+
 - **Observability Status(관측 상태)**: 현재 모니터링 스택 상태를 빠르게 확인하는 체크리스트.
   - **왜 필요?** 장애 시 어디가 문제인지 즉시 파악하기 위해.
   - **어디에?** `ops/observability_status.md`.
@@ -1643,6 +1647,22 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - 에러율/지연시간/업스트림/최근 에러 로그 등 핵심 패널 구성 정리
+
+---
+
+# 작업 기록: Kibana Saved Objects 자동 생성 스크립트 추가
+
+## 작업 목적
+- Kibana의 Saved Query/Dashboard를 스크립트로 생성할 수 있도록 추가했습니다.
+
+## 변경 파일
+- `ops/logging/bootstrap_kibana_saved_objects.sh`
+- `ops/logging/kibana_saved_objects.md`
+- `ops/logging/README.md`
+
+## 요약
+- 자주 쓰는 KQL 쿼리 저장 자동화
+- 빈 대시보드 템플릿 자동 생성
 
 ---
 
