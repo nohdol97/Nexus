@@ -1,0 +1,5 @@
+apiVersion: 1
+
+# Placeholder for future Grafana-managed alert rules.
+# Using Prometheus Alertmanager for now.
+

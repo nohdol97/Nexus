@@ -198,6 +198,14 @@
   - **왜 필요?** 외부 시스템으로 알림을 전달하기 위해.
   - **어디에?** `ops/alertmanager.yml`의 예시 설정.
 
+- **Contact Point(연락처)**: Grafana 알림이 전달될 대상 설정.
+  - **왜 필요?** 알림을 외부 시스템으로 보내기 위해.
+  - **어디에?** `ops/grafana/provisioning/alerting/contact-points.yml`.
+
+- **Notification Policy(알림 정책)**: 알림을 어떤 규칙으로 묶어 전달할지 결정.
+  - **왜 필요?** 알림 빈도/그룹화를 조절하기 위해.
+  - **어디에?** `ops/grafana/provisioning/alerting/notification-policies.yml`.
+
 - **Port Forward(포트 포워딩)**: 클러스터 내부 서비스를 로컬에서 여는 방법.
   - **왜 필요?** 로컬에서 UI나 API에 접속하기 위해.
   - **어디에?** `kubectl port-forward` 명령으로 사용.
@@ -1580,3 +1588,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 ## 요약
 - `alertmanager` 컨테이너 시작
 - Prometheus 재시작으로 alerting 설정 반영
+
+---
+
+# 작업 기록: Grafana 알림 설정 스캐폴딩
+
+## 작업 목적
+- Grafana에서 알림을 외부로 전송할 수 있도록 기본 설정을 추가했습니다.
+
+## 변경 파일
+- `ops/grafana/provisioning/alerting/contact-points.yml`
+- `ops/grafana/provisioning/alerting/notification-policies.yml`
+- `ops/grafana/provisioning/alerting/alert-rules.yml`
+- `ops/grafana/provisioning/alerting/README.md`
+
+## 요약
+- Alertmanager로 전송하는 기본 Webhook Contact Point 추가
+- 기본 Notification Policy 추가

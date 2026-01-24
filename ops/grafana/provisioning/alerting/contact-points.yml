@@ -1,0 +1,15 @@
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: Default-Webhook
+    receivers:
+      - uid: default_webhook
+        type: webhook
+        settings:
+          url: "http://alertmanager:9093/api/v1/alerts"
+          httpMethod: POST
+          maxAlerts: 0
+          title: "Grafana Alert"
+          message: "{{ range .Alerts }}{{ .Labels.alertname }} - {{ .Annotations.summary }}\n{{ end }}"
+        disableResolveMessage: false
