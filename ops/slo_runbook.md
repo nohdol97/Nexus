@@ -206,3 +206,4 @@ docker compose -f docker-compose.yml -f docker-compose.logging.yml restart kiban
 ## Notes
 - 로컬 환경 기준이며, 운영 환경에서는 SLO/Alert 기준을 조정해야 합니다.
 - 로그 파이프라인은 `gateway` 컨테이너 로그(JSON)를 기준으로 동작합니다.
+- 로컬 재현 요약: `ops/runbook_quickstart.md`

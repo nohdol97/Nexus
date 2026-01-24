@@ -186,6 +186,22 @@
   - **왜 필요?** 누구나 동일한 절차로 빠르게 복구하기 위해.
   - **어디에?** `ops/slo_runbook.md`.
 
+- **Quickstart(빠른 시작)**: 핵심 절차만 요약한 짧은 가이드.
+  - **왜 필요?** 긴 문서를 읽지 않고도 빠르게 테스트하기 위해.
+  - **어디에?** `ops/runbook_quickstart.md`.
+
+- **Flag/Option(옵션)**: 명령어의 동작을 바꾸는 스위치.
+  - **왜 필요?** 명령어를 상황에 맞게 조정하기 위해.
+  - **어디에?** `docs/cli_commands_guide.md`.
+
+- **Pipe(파이프)**: 한 명령의 출력을 다음 명령의 입력으로 전달하는 기능.
+  - **왜 필요?** 결과를 필터링/가공해서 바로 다음 명령으로 넘기기 위해.
+  - **어디에?** `docs/cli_commands_guide.md`.
+
+- **Redirection(리다이렉션)**: 출력 결과를 파일로 저장하는 기능.
+  - **왜 필요?** 결과를 파일로 남기거나 로그를 보존하기 위해.
+  - **어디에?** `docs/cli_commands_guide.md`.
+
 - **Alert Rule(알림 규칙)**: 지표가 기준을 넘으면 알림을 발생시키는 조건.
   - **왜 필요?** 장애 징후를 빠르게 감지하기 위해.
   - **어디에?** `ops/prometheus_alerts.yml`.
@@ -1640,3 +1656,30 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - 서비스 상태, 접근 URL, 로그 플로우 테스트 절차 정리
+
+---
+
+# 작업 기록: Runbook Quickstart 추가
+
+## 작업 목적
+- 로컬에서 빠르게 장애 상황을 재현/확인할 수 있는 최소 절차를 정리했습니다.
+
+## 변경 파일
+- `ops/runbook_quickstart.md`
+- `ops/slo_runbook.md`
+
+## 요약
+- Gateway down, 로그 플로우 테스트 등 최소 재현 시나리오 정리
+
+---
+
+# 작업 기록: 터미널 명령어/옵션 가이드 추가
+
+## 작업 목적
+- curl/docker/kubectl 등 명령어의 옵션과 기호를 쉽게 이해할 수 있도록 정리했습니다.
+
+## 변경 파일
+- `docs/cli_commands_guide.md`
+
+## 요약
+- 자주 쓰는 옵션(단축어)과 파이프/리다이렉션 등 셸 문법 설명 추가
