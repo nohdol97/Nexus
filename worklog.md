@@ -142,6 +142,10 @@
   - **왜 필요?** Kibana에서 필드 기반 탐색을 쉽게 하기 위해.
   - **어디에?** `ops/logging/log_schema.md`.
 
+- **Observability Summary(관측 요약)**: 관측 스택 구성과 링크를 한눈에 보는 문서.
+  - **왜 필요?** 현재 구성/접근 경로를 빠르게 파악하기 위해.
+  - **어디에?** `ops/observability_summary.md`.
+
 - **Throughput(TPS, 처리량)**: 초당 처리 가능한 요청 수.
   - **왜 필요?** 시스템이 얼마나 많은 요청을 감당하는지 판단하기 위해.
   - **어디에?** `ops/perf_tuning_report.md` 지표 항목.
@@ -1703,6 +1707,19 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - 로그 필드/설명/예시 표 추가
+
+---
+
+# 작업 기록: 관측 스택 요약 문서 추가
+
+## 작업 목적
+- 로컬 관측 스택 구성과 접근 URL을 한눈에 볼 수 있도록 요약했습니다.
+
+## 변경 파일
+- `ops/observability_summary.md`
+
+## 요약
+- Metrics/Logs/Alerts 구성과 접근 링크 정리
 
 ---
 
