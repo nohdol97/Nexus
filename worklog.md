@@ -130,6 +130,10 @@
   - **왜 필요?** 장애 상황을 빠르게 한눈에 파악하기 위해.
   - **어디에?** `ops/logging/kibana_dashboard.md`.
 
+- **Observability Status(관측 상태)**: 현재 모니터링 스택 상태를 빠르게 확인하는 체크리스트.
+  - **왜 필요?** 장애 시 어디가 문제인지 즉시 파악하기 위해.
+  - **어디에?** `ops/observability_status.md`.
+
 - **Throughput(TPS, 처리량)**: 초당 처리 가능한 요청 수.
   - **왜 필요?** 시스템이 얼마나 많은 요청을 감당하는지 판단하기 위해.
   - **어디에?** `ops/perf_tuning_report.md` 지표 항목.
@@ -1623,3 +1627,16 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - 에러율/지연시간/업스트림/최근 에러 로그 등 핵심 패널 구성 정리
+
+---
+
+# 작업 기록: 관측 스택 상태 체크리스트 추가
+
+## 작업 목적
+- 로컬에서 Prometheus/Grafana/Kibana/Alertmanager 상태를 빠르게 확인할 수 있도록 체크리스트를 추가했습니다.
+
+## 변경 파일
+- `ops/observability_status.md`
+
+## 요약
+- 서비스 상태, 접근 URL, 로그 플로우 테스트 절차 정리
