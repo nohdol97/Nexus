@@ -122,6 +122,10 @@
   - **왜 필요?** 에러/지연/업스트림 등 원하는 로그를 빠르게 찾기 위해.
   - **어디에?** `ops/logging/kibana_queries.md`.
 
+- **Correlation(상관 분석)**: 지표와 로그를 함께 보고 원인을 좁히는 방법.
+  - **왜 필요?** 지표 이상 원인을 로그에서 빠르게 찾기 위해.
+  - **어디에?** `ops/logging/correlation_guide.md`.
+
 - **Source/Sink(소스/싱크)**: Vector 파이프라인의 입력/출력 지점.
   - **왜 필요?** 어디서 로그를 읽고 어디로 보낼지 분리해 설정하기 위해.
   - **어디에?** `vector-to-kafka.toml`, `kafka-to-es.toml`에서 정의.
@@ -1486,3 +1490,17 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - 에러/지연/업스트림/요청 추적용 기본 쿼리 예시 제공
+
+---
+
+# 작업 기록: 메트릭-로그 상관 분석 가이드 추가
+
+## 작업 목적
+- Prometheus 지표와 Kibana 로그를 함께 보는 방법을 정리했습니다.
+
+## 변경 파일
+- `ops/logging/correlation_guide.md`
+- `ops/logging/README.md`
+
+## 요약
+- 에러율/지연/업스트림 오류/레이트리밋/회로차단 상황별 점검 흐름 정리
