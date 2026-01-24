@@ -126,6 +126,10 @@
   - **왜 필요?** 지표 이상 원인을 로그에서 빠르게 찾기 위해.
   - **어디에?** `ops/logging/correlation_guide.md`.
 
+- **Dashboard(대시보드)**: 여러 지표/로그 패널을 한 화면에 모아 보는 화면.
+  - **왜 필요?** 장애 상황을 빠르게 한눈에 파악하기 위해.
+  - **어디에?** `ops/logging/kibana_dashboard.md`.
+
 - **Throughput(TPS, 처리량)**: 초당 처리 가능한 요청 수.
   - **왜 필요?** 시스템이 얼마나 많은 요청을 감당하는지 판단하기 위해.
   - **어디에?** `ops/perf_tuning_report.md` 지표 항목.
@@ -1605,3 +1609,17 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 ## 요약
 - Alertmanager로 전송하는 기본 Webhook Contact Point 추가
 - 기본 Notification Policy 추가
+
+---
+
+# 작업 기록: Kibana 대시보드 템플릿 추가
+
+## 작업 목적
+- Kibana에서 사용할 기본 대시보드 구성을 문서로 정리했습니다.
+
+## 변경 파일
+- `ops/logging/kibana_dashboard.md`
+- `ops/logging/README.md`
+
+## 요약
+- 에러율/지연시간/업스트림/최근 에러 로그 등 핵심 패널 구성 정리

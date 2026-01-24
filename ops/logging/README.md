@@ -25,3 +25,4 @@ docker compose -f docker-compose.yml -f docker-compose.logging.yml up -d
   ```
 - Query templates: `ops/logging/kibana_queries.md`
 - Correlation guide: `ops/logging/correlation_guide.md`
+- Dashboard template: `ops/logging/kibana_dashboard.md`
