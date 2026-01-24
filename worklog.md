@@ -138,6 +138,10 @@
   - **왜 필요?** 장애 시 어디가 문제인지 즉시 파악하기 위해.
   - **어디에?** `ops/observability_status.md`.
 
+- **Log Schema(로그 스키마)**: 로그에 포함되는 필드와 의미를 정리한 문서.
+  - **왜 필요?** Kibana에서 필드 기반 탐색을 쉽게 하기 위해.
+  - **어디에?** `ops/logging/log_schema.md`.
+
 - **Throughput(TPS, 처리량)**: 초당 처리 가능한 요청 수.
   - **왜 필요?** 시스템이 얼마나 많은 요청을 감당하는지 판단하기 위해.
   - **어디에?** `ops/perf_tuning_report.md` 지표 항목.
@@ -1685,6 +1689,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 ## 요약
 - 자주 쓰는 KQL 쿼리 저장 자동화
 - 빈 대시보드 템플릿 자동 생성
+
+---
+
+# 작업 기록: Gateway 로그 스키마 문서 추가
+
+## 작업 목적
+- Gateway 로그 필드 정의를 문서로 정리했습니다.
+
+## 변경 파일
+- `ops/logging/log_schema.md`
+- `ops/logging/README.md`
+
+## 요약
+- 로그 필드/설명/예시 표 추가
 
 ---
 

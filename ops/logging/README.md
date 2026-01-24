@@ -27,3 +27,4 @@ docker compose -f docker-compose.yml -f docker-compose.logging.yml up -d
 - Correlation guide: `ops/logging/correlation_guide.md`
 - Dashboard template: `ops/logging/kibana_dashboard.md`
 - Saved objects bootstrap: `ops/logging/kibana_saved_objects.md`
+- Log schema: `ops/logging/log_schema.md`
