@@ -134,6 +134,14 @@
   - **왜 필요?** 자주 쓰는 로그 필터를 반복 입력하지 않기 위해.
   - **어디에?** `ops/logging/bootstrap_kibana_saved_objects.sh`.
 
+- **Saved Search(저장 검색)**: Discover 화면에서 저장하는 검색/테이블 설정.
+  - **왜 필요?** 자주 쓰는 검색 결과를 빠르게 재사용하기 위해.
+  - **어디에?** `ops/logging/kibana_saved_objects.ndjson`.
+
+- **NDJSON(Newline Delimited JSON)**: JSON 객체를 한 줄씩 이어붙인 형식.
+  - **왜 필요?** 여러 Kibana Saved Objects를 한 번에 가져오기/내보내기 위해.
+  - **어디에?** `ops/logging/kibana_saved_objects.ndjson`.
+
 - **Observability Status(관측 상태)**: 현재 모니터링 스택 상태를 빠르게 확인하는 체크리스트.
   - **왜 필요?** 장애 시 어디가 문제인지 즉시 파악하기 위해.
   - **어디에?** `ops/observability_status.md`.
@@ -1692,7 +1700,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - 자주 쓰는 KQL 쿼리 저장 자동화
-- 빈 대시보드 템플릿 자동 생성
+- Saved Search + 기본 대시보드 템플릿 자동 생성
+
+---
+
+# 작업 기록: NDJSON 용어 설명 추가
+
+## 작업 목적
+- Kibana Saved Objects 포맷(NDJSON)을 쉽게 이해할 수 있도록 용어 설명을 추가했습니다.
+
+## 변경 파일
+- `worklog.md`
+
+## 요약
+- NDJSON 정의 및 사용 이유 추가
 
 ---
 
