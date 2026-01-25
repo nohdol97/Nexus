@@ -154,6 +154,10 @@
   - **왜 필요?** 현재 구성/접근 경로를 빠르게 파악하기 위해.
   - **어디에?** `ops/observability_summary.md`.
 
+- **Bootstrap Script(부트스트랩 스크립트)**: 초기 설정을 자동으로 구성하는 스크립트.
+  - **왜 필요?** 데이터 뷰/저장 객체 등을 반복 없이 생성하기 위해.
+  - **어디에?** `ops/observability_bootstrap.sh`.
+
 - **Throughput(TPS, 처리량)**: 초당 처리 가능한 요청 수.
   - **왜 필요?** 시스템이 얼마나 많은 요청을 감당하는지 판단하기 위해.
   - **어디에?** `ops/perf_tuning_report.md` 지표 항목.
@@ -1756,6 +1760,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - Metrics/Logs/Alerts 구성과 접근 링크 정리
+
+---
+
+# 작업 기록: 관측 스택 부트스트랩 스크립트 추가
+
+## 작업 목적
+- Kibana 데이터 뷰와 저장 객체 생성을 한 번에 실행하도록 스크립트를 추가했습니다.
+
+## 변경 파일
+- `ops/observability_bootstrap.sh`
+- `ops/observability_summary.md`
+
+## 요약
+- `bootstrap_kibana.sh` + `bootstrap_kibana_saved_objects.sh` 연계 실행
 
 ---
 

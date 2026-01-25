@@ -12,6 +12,11 @@
 docker compose -f docker-compose.yml -f docker-compose.logging.yml up -d
 ```
 
+## 초기화(프로비저닝)
+```bash
+./ops/observability_bootstrap.sh
+```
+
 ## 접근 URL
 - Prometheus: http://localhost:9090
 - Grafana: http://localhost:3000
