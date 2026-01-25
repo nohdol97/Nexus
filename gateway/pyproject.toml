@@ -13,11 +13,13 @@ dependencies = [
   "prometheus-client>=0.20",
   "redis>=5.0",
   "pyjwt>=2.9",
+  "grpcio>=1.64",
 ]
 
 [project.optional-dependencies]
 dev = [
   "pytest>=8",
+  "grpcio-tools>=1.64",
 ]
 
 [tool.pytest.ini_options]

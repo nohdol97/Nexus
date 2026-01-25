@@ -58,6 +58,26 @@
   - **왜 필요?** 내부 서비스 간 고TPS/저지연 통신에 유리.
   - **어디에?** `contracts/nexus_inference.proto`, `docs/msa_communication.md`.
 
+- **gRPC Channel(채널)**: gRPC 서버와 연결을 유지하는 통신 통로.
+  - **왜 필요?** 클라이언트가 서버에 요청을 보내기 위해.
+  - **어디에?** `gateway/scripts/grpc_agent_smoke.py`.
+
+- **gRPC Stub(스텁)**: gRPC 서버의 메서드를 호출하기 위한 클라이언트 객체.
+  - **왜 필요?** 메서드 호출을 함수처럼 사용하기 위해.
+  - **어디에?** `gateway/scripts/grpc_agent_smoke.py`.
+
+- **Codegen(코드 생성)**: proto 계약을 실제 코드로 자동 변환하는 작업.
+  - **왜 필요?** 요청/응답 구조와 서비스 인터페이스를 일관되게 맞추기 위해.
+  - **어디에?** `scripts/gen_grpc.sh`.
+
+- **PB2 / PB2_GRPC**: proto에서 자동 생성되는 Python 파일 이름 규칙.
+  - **왜 필요?** 메시지 구조(`*_pb2.py`)와 서비스 연결(`*_pb2_grpc.py`)을 구분하기 위해.
+  - **어디에?** `docs/grpc_gen_guide.md`.
+
+- **Generated Code(자동 생성 코드)**: 스크립트로 생성되는 파일(직접 수정하지 않음).
+  - **왜 필요?** proto 변경 시 일관된 코드 생성과 호환성 유지.
+  - **어디에?** `scripts/gen_grpc.sh`, `docs/grpc_gen_guide.md`.
+
 - **RPC(Remote Procedure Call, 원격 프로시저 호출)**: 네트워크 너머의 함수를 로컬 호출처럼 실행하는 방식.
   - **왜 필요?** 서비스 간 호출을 단순한 함수 호출처럼 만들기 위해.
   - **어디에?** `contracts/nexus_inference.proto`의 `service`/`rpc` 정의.
@@ -2189,3 +2209,57 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 ## 요약
 - REST 호출 가이드/예시 추가
 - 스모크 테스트 스크립트 제공
+
+---
+
+# 작업 기록: 내부 gRPC Agent 연결 스캐폴딩/실행 경로 추가
+
+## 작업 목적
+- 통합 사용 시나리오(2)인 내부 gRPC 통신을 실제로 실행 가능한 수준으로 구성했습니다.
+
+## 변경 파일
+- `scripts/gen_grpc.sh`
+- `gateway/scripts/grpc_agent_smoke.py`
+- `serving/mock-worker/grpc_server.py`
+- `docs/grpc_agent_guide.md`
+- `gateway/pyproject.toml`
+- `serving/mock-worker/requirements.txt`
+- `gateway/README.md`
+- `serving/mock-worker/README.md`
+- `worklog.md`
+- `gateway/app/grpc/gen/*`
+- `serving/mock-worker/grpc_gen/*`
+
+## 요약
+- proto → Python 코드 생성 스크립트 추가
+- gRPC 서버(모크 워커)와 gRPC 클라이언트 스모크 추가
+- 실행 가이드 문서화
+
+---
+
+# 작업 기록: gRPC gen 코드 이해 가이드 추가
+
+## 작업 목적
+- 자동 생성된 gRPC Python 코드(pb2/pb2_grpc)를 이해하기 위한 설명 문서를 추가했습니다.
+
+## 변경 파일
+- `docs/grpc_gen_guide.md`
+- `worklog.md`
+
+## 요약
+- pb2/pb2_grpc 역할과 읽는 법 정리
+
+---
+
+# 작업 기록: gRPC gen 생성 경로 명시
+
+## 작업 목적
+- gen 코드가 `scripts/gen_grpc.sh`로 생성된다는 점을 문서에 명확히 표시했습니다.
+
+## 변경 파일
+- `docs/grpc_gen_guide.md`
+- `docs/grpc_agent_guide.md`
+- `worklog.md`
+
+## 요약
+- 자동 생성 코드의 생성 방식/주의사항 추가

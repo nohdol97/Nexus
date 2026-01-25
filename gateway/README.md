@@ -125,3 +125,9 @@ curl -X POST http://localhost:8000/v1/chat/completions \
 ```bash
 ./gateway/scripts/agent_client_smoke.sh
 ```
+
+## gRPC agent smoke test
+
+```bash
+python3 gateway/scripts/grpc_agent_smoke.py
+```

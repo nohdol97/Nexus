@@ -25,3 +25,11 @@ curl -X POST http://localhost:8001/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model":"mock-worker","messages":[{"role":"user","content":"hello"}]}'
 ```
+
+## gRPC server (optional)
+
+```bash
+python3 serving/mock-worker/grpc_server.py
+```
+
+- Default port: `50051`
