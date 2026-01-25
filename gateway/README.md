@@ -111,6 +111,13 @@ GATEWAY_JWT_SECRET="my-secret"
 GATEWAY_JWT_ALGORITHMS="HS256"
 ```
 
+## gRPC upstream example
+
+```bash
+GATEWAY_UPSTREAMS="worker=grpc://localhost:50051"
+GATEWAY_DEFAULT_UPSTREAM="worker"
+```
+
 ## Example request
 
 ```bash

@@ -66,6 +66,14 @@
   - **왜 필요?** 메서드 호출을 함수처럼 사용하기 위해.
   - **어디에?** `gateway/scripts/grpc_agent_smoke.py`.
 
+- **gRPC Upstream**: Gateway가 `grpc://` 스킴으로 내부 워커를 호출하는 방식.
+  - **왜 필요?** 내부 통신을 저지연으로 처리하기 위해.
+  - **어디에?** `gateway/app/services/proxy.py`, `docs/grpc_agent_guide.md`.
+
+- **Protocol Adapter(프로토콜 어댑터)**: REST 요청을 gRPC 등 다른 프로토콜로 변환하는 역할.
+  - **왜 필요?** 외부 호출과 내부 통신 방식을 분리해 유연성을 확보하기 위해.
+  - **어디에?** `gateway/app/services/proxy.py`의 `_grpc_response`.
+
 - **Codegen(코드 생성)**: proto 계약을 실제 코드로 자동 변환하는 작업.
   - **왜 필요?** 요청/응답 구조와 서비스 인터페이스를 일관되게 맞추기 위해.
   - **어디에?** `scripts/gen_grpc.sh`.
@@ -2336,3 +2344,36 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 ## 요약
 - SGLang 실행 스크립트 제공
 - 헬스체크 URL 환경 변수 지원
+
+---
+
+# 작업 기록: Gateway gRPC 업스트림 연동
+
+## 작업 목적
+- MSA 통신 실 구현으로 Gateway가 gRPC 워커를 직접 호출할 수 있게 했습니다.
+
+## 변경 파일
+- `gateway/app/services/proxy.py`
+- `gateway/app/grpc/__init__.py`
+- `docs/grpc_agent_guide.md`
+- `gateway/README.md`
+- `worklog.md`
+
+## 요약
+- `grpc://` 업스트림 지원 추가
+- gRPC 생성 코드 로딩 방식 정리
+- 문서에 gRPC 업스트림 사용 예시 추가
+
+---
+
+# 작업 기록: gRPC 응답 변환 흐름 정리
+
+## 작업 목적
+- Gateway의 `_grpc_response` 동작을 문서로 정리해 이해하기 쉽게 했습니다.
+
+## 변경 파일
+- `docs/grpc_agent_guide.md`
+- `worklog.md`
+
+## 요약
+- REST → gRPC 변환 흐름과 관련 코드 경로 설명 추가

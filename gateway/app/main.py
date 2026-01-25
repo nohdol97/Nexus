@@ -174,6 +174,9 @@ async def chat_completions(
         "x-request-id": request.state.request_id,
         "x-trace-id": request.state.trace_id,
     }
+    idempotency_key = request.headers.get("idempotency-key")
+    if idempotency_key:
+        forward_headers["idempotency-key"] = idempotency_key
     fallback_map = settings.fallback_map()
     candidates = [payload.model] + fallback_map.get(payload.model, [])
     allowed_models = auth.allowed_models

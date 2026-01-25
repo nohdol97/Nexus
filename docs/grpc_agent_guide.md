@@ -57,3 +57,30 @@ python3 gateway/scripts/grpc_agent_smoke.py
 - [ ] `scripts/gen_grpc.sh` 실행 완료
 - [ ] gRPC 서버가 `50051`에서 대기 중
 - [ ] 클라이언트 호출 시 응답 수신
+
+---
+
+## 6) Gateway에서 gRPC 업스트림 사용
+
+Gateway가 gRPC 워커를 호출하도록 업스트림을 등록할 수 있습니다.
+
+```bash
+GATEWAY_UPSTREAMS="worker=grpc://localhost:50051"
+GATEWAY_DEFAULT_UPSTREAM="worker"
+```
+
+---
+
+## 7) Gateway 내부 동작 (_grpc_response)
+
+Gateway는 REST 요청을 gRPC 요청으로 변환해 워커로 전달합니다.
+
+동작 흐름:
+1. 업스트림 주소에서 `host:port` 추출 (`grpc://host:port`)
+2. gRPC 채널/Stub 생성 또는 재사용
+3. proto 메시지(`ChatCompletionRequest`) 구성
+4. `ChatCompletion` 호출
+5. gRPC 응답을 OpenAI 호환 JSON으로 변환해 반환
+
+관련 코드:
+- `gateway/app/services/proxy.py`의 `_grpc_response`
