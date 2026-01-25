@@ -246,6 +246,10 @@
   - **왜 필요?** 외부 시스템으로 알림을 전달하기 위해.
   - **어디에?** `ops/alertmanager.yml`의 예시 설정.
 
+- **Test Alert(테스트 알림)**: 실제 장애 없이 알림 경로를 검증하는 테스트 이벤트.
+  - **왜 필요?** 알림이 정상적으로 도착하는지 확인하기 위해.
+  - **어디에?** `ops/alerts/test_alert.sh`.
+
 - **Slack Webhook(슬랙 웹훅)**: Slack으로 알림을 보내는 URL 기반 방식.
   - **왜 필요?** 팀 채널로 즉시 알림을 전달하기 위해.
   - **어디에?** `ops/alerts/receiver_templates.md`.
@@ -1675,6 +1679,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - Slack Webhook, SMTP 예시 추가
+
+---
+
+# 작업 기록: Alertmanager 테스트 알림 스크립트 추가
+
+## 작업 목적
+- 로컬에서 알림 경로를 검증할 수 있도록 테스트 스크립트를 추가했습니다.
+
+## 변경 파일
+- `ops/alerts/test_alert.sh`
+- `ops/alerts/README.md`
+
+## 요약
+- Alertmanager로 테스트 알림 전송 스크립트 추가
 
 ---
 

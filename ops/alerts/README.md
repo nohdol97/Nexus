@@ -34,3 +34,8 @@ docker compose -f docker-compose.yml -f docker-compose.logging.yml restart alert
 
 ## Templates
 - `ops/alerts/receiver_templates.md`
+
+## Test alert
+```bash
+./ops/alerts/test_alert.sh
+```
