@@ -1,0 +1,20 @@
+services:
+  gateway:
+    environment:
+      GATEWAY_UPSTREAMS: "vllm=http://vllm:8001;sglang=http://sglang:8002"
+      GATEWAY_FALLBACKS: "vllm=sglang"
+    depends_on:
+      - sglang
+
+  sglang:
+    image: ${SGLANG_IMAGE:-sglang-placeholder}
+    ports:
+      - "8002:8002"
+    command: ${SGLANG_COMMAND:-}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

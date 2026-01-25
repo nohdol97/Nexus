@@ -322,6 +322,18 @@
   - **왜 필요?** 시스템이 얼마나 많은 요청을 감당하는지 판단하기 위해.
   - **어디에?** `ops/perf_tuning_report.md` 지표 항목.
 
+- **LLM Serving(서빙)**: 모델을 API로 제공해 요청을 처리하는 시스템.
+  - **왜 필요?** 실제 서비스에서 모델을 호출할 수 있게 하기 위해.
+  - **어디에?** `docs/llm_serving_agent_guide.md`, `plan.md`.
+
+- **OpenAI 호환 API**: `/v1/chat/completions` 형식의 공통 API 스펙.
+  - **왜 필요?** 다양한 모델 엔진을 동일한 호출 방식으로 통합하기 위해.
+  - **어디에?** `docs/llm_serving_agent_guide.md`, `gateway/README.md`.
+
+- **Healthcheck(헬스체크)**: 서비스가 정상 동작하는지 확인하는 간단한 상태 점검.
+  - **왜 필요?** 배포 후 빠르게 정상 여부를 확인하기 위해.
+  - **어디에?** `docs/llm_serving_agent_guide.md`, `scripts/run_sglang.sh`.
+
 - **Load Test(부하 테스트)**: 일정 트래픽을 지속적으로 주어 성능을 측정하는 테스트.
   - **왜 필요?** 안정적인 처리량/지연 시간을 확인하기 위해.
   - **어디에?** `ops/testing/load_test.md`.
@@ -2263,3 +2275,64 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - 자동 생성 코드의 생성 방식/주의사항 추가
+
+---
+
+# 작업 기록: LLM 서빙 연동 가이드 추가
+
+## 작업 목적
+- 통합 사용 시나리오(3)인 vLLM/SGLang 연동의 기본 흐름을 문서화했습니다.
+
+## 변경 파일
+- `docs/llm_serving_agent_guide.md`
+- `worklog.md`
+
+## 요약
+- vLLM 기본 + SGLang 보조 사용 원칙과 라우팅/헬스체크 기준 정리
+
+---
+
+# 작업 기록: LLM 서빙 가이드 상세 보강
+
+## 작업 목적
+- vLLM/SGLang 연동 문서에 실행 예시와 대안 경로를 추가했습니다.
+
+## 변경 파일
+- `docs/llm_serving_agent_guide.md`
+- `worklog.md`
+
+## 요약
+- vLLM Compose 실행 예시 추가
+- GPU 없는 환경의 대안(LiteLLM) 정리
+- 헬스체크/관측 포인트 보강
+
+---
+
+# 작업 기록: SGLang Compose 스캐폴딩 추가
+
+## 작업 목적
+- vLLM/SGLang 연동을 위해 SGLang용 docker compose 템플릿을 추가했습니다.
+
+## 변경 파일
+- `docker-compose.sglang.yml`
+- `docs/llm_serving_agent_guide.md`
+- `worklog.md`
+
+## 요약
+- SGLang 템플릿 compose와 실행 예시 추가
+
+---
+
+# 작업 기록: SGLang 실행 스크립트/헬스체크 추가
+
+## 작업 목적
+- SGLang 템플릿을 실제 실행 가능한 스크립트와 헬스체크로 보강했습니다.
+
+## 변경 파일
+- `scripts/run_sglang.sh`
+- `docs/llm_serving_agent_guide.md`
+- `worklog.md`
+
+## 요약
+- SGLang 실행 스크립트 제공
+- 헬스체크 URL 환경 변수 지원
