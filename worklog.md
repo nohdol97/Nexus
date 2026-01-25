@@ -1704,6 +1704,21 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ---
 
+# 작업 기록: Kibana Saved Objects 프로비저닝 검증
+
+## 작업 목적
+- 저장 객체 생성 스크립트를 실행해 실제 생성 여부를 확인했습니다.
+
+## 변경 파일
+- `ops/logging/bootstrap_kibana_saved_objects.sh`
+- `worklog.md`
+
+## 요약
+- 데이터 뷰 조회 로직 개선(DATA_VIEW_ID 옵션 유지)
+- Saved Query + Dashboard 생성 확인
+
+---
+
 # 작업 기록: NDJSON 용어 설명 추가
 
 ## 작업 목적

@@ -3,29 +3,21 @@ set -euo pipefail
 
 KIBANA_URL=${KIBANA_URL:-http://localhost:5601}
 DATA_VIEW_TITLE=${DATA_VIEW_TITLE:-gateway-logs-*}
+DATA_VIEW_ID=${DATA_VIEW_ID:-}
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 fetch_data_view_id() {
   curl -s "${KIBANA_URL}/api/saved_objects/_find?type=index-pattern&search=${DATA_VIEW_TITLE}&search_fields=title" \
-    -H 'kbn-xsrf: true' | python3 - <<'PY'
-import json,sys
-try:
-    data=json.load(sys.stdin)
-    items=data.get('saved_objects',[])
-    if items:
-        print(items[0].get('id',''))
-    else:
-        print('')
-except Exception:
-    print('')
-PY
+    -H 'kbn-xsrf: true' | python3 -c 'import json,sys; data=json.load(sys.stdin); items=data.get("saved_objects",[]); print(items[0].get("id","") if items else "")'
 }
 
 # Ensure data view exists
-DATA_VIEW_ID=$(fetch_data_view_id)
 if [[ -z "${DATA_VIEW_ID}" ]]; then
-  "${SCRIPT_DIR}/bootstrap_kibana.sh" >/dev/null
   DATA_VIEW_ID=$(fetch_data_view_id)
+  if [[ -z "${DATA_VIEW_ID}" ]]; then
+    "${SCRIPT_DIR}/bootstrap_kibana.sh" >/dev/null
+    DATA_VIEW_ID=$(fetch_data_view_id)
+  fi
 fi
 
 if [[ -z "${DATA_VIEW_ID}" ]]; then
