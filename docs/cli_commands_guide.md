@@ -38,6 +38,7 @@
 - `-o` : 응답 저장 파일 지정
 - `-w` : 응답 코드/시간 등 출력 포맷 지정
 - `--max-time` : 최대 대기 시간(초)
+- 환경변수 예시: `BASE_URL=http://localhost:8000 API_KEY=dev-key`
 
 예시:
 ```bash

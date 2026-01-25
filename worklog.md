@@ -42,6 +42,10 @@
   - **왜 필요?** 간단한 테스트/운영 작업을 빠르게 하기 위해.
   - **어디에?** `docs/cli_commands_guide.md`, `plan.md` Agent 통합 항목.
 
+- **SDK(샘플 클라이언트)**: 외부 Agent가 쉽게 호출하도록 제공하는 예제 클라이언트/스크립트.
+  - **왜 필요?** 빠른 연동과 테스트를 위해.
+  - **어디에?** `docs/agent_client_guide.md`, `gateway/scripts/agent_client_smoke.sh`.
+
 - **MSA(Microservices Architecture, 마이크로서비스 아키텍처)**: 큰 서비스를 여러 개의 작은 서비스로 분리해 운영하는 방식.
   - **왜 필요?** 서비스별 독립 배포/확장/장애 격리가 쉬워짐.
   - **어디에?** `docs/msa_communication.md`의 통신 원칙.
@@ -2167,3 +2171,21 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - Agent 사용 수준을 1/2/3 범주로 분리해 실 구현 항목을 명시
+
+---
+
+# 작업 기록: 외부 Agent 클라이언트 가이드/스크립트 추가
+
+## 작업 목적
+- 통합 사용 시나리오(1)인 외부 Agent REST 호출을 쉽게 시작할 수 있도록 가이드와 스모크 스크립트를 추가했습니다.
+
+## 변경 파일
+- `docs/agent_client_guide.md`
+- `gateway/scripts/agent_client_smoke.sh`
+- `gateway/README.md`
+- `docs/cli_commands_guide.md`
+- `worklog.md`
+
+## 요약
+- REST 호출 가이드/예시 추가
+- 스모크 테스트 스크립트 제공

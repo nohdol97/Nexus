@@ -119,3 +119,9 @@ curl -X POST http://localhost:8000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model":"mock","messages":[{"role":"user","content":"hello"}]}'
 ```
+
+## Agent client smoke test
+
+```bash
+./gateway/scripts/agent_client_smoke.sh
+```
