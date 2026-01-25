@@ -18,6 +18,15 @@ docker build -t nexus-model-worker:latest -f serving/mock-worker/Dockerfile serv
 docker run --rm -p 8001:8001 -e WORKER_MODEL_NAME=mock-worker nexus-model-worker:latest
 ```
 
+## Chaos knobs (optional)
+
+```bash
+WORKER_DELAY_MS=500
+WORKER_FAIL_RATE=0.1
+```
+
+> Delay is in milliseconds, fail rate is 0.0 ~ 1.0.
+
 ## Quick test
 
 ```bash

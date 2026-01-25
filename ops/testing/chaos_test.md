@@ -25,7 +25,8 @@
 
 ### 2.2 지연 시간 강제 증가
 - 대상: 업스트림 응답 지연
-- 방법: mock worker에 인위적 sleep 추가(테스트 전용)
+- 방법: mock worker에 인위적 delay 적용
+  - `WORKER_DELAY_MS=500` 환경 변수 사용
 - 기대 결과:
   - timeout 발생
   - 재시도/에러율 증가 감지
@@ -39,7 +40,16 @@
 
 ---
 
-## 3) 체크리스트
+## 3) 실행 스크립트 (옵션)
+
+```bash
+WORKER_DELAY_MS=500 WORKER_FAIL_RATE=0.1 \\
+  ./ops/testing/chaos_toggle.sh
+```
+
+---
+
+## 4) 체크리스트
 
 - [ ] 장애 상황에서도 Gateway는 살아있는가?
 - [ ] Circuit Breaker가 열리는가?

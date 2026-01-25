@@ -318,6 +318,14 @@
   - **왜 필요?** 장애 대응 체계를 검증하기 위해.
   - **어디에?** `plan.md` 강화 항목.
 
+- **Delay Injection(지연 주입)**: 응답을 일부러 늦춰 장애 상황을 재현하는 방법.
+  - **왜 필요?** 타임아웃/재시도 동작을 검증하기 위해.
+  - **어디에?** `serving/mock-worker/app.py`, `ops/testing/chaos_test.md`.
+
+- **Fail Rate(실패 확률)**: 일부 요청을 실패시키기 위한 비율(0.0~1.0).
+  - **왜 필요?** 오류율 상승 상황을 테스트하기 위해.
+  - **어디에?** `serving/mock-worker/app.py`, `ops/testing/chaos_test.md`.
+
 - **Blue/Green 배포**: 두 환경을 번갈아 운영해 무중단 전환하는 배포 방식.
   - **왜 필요?** 롤백과 안전 배포를 쉽게 하기 위해.
   - **어디에?** `plan.md` 강화 항목.
@@ -2424,3 +2432,25 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 - `GATEWAY_SHADOW_*` 설정 추가
 - shadow 요청 비동기 전송 + 성공/실패 메트릭 기록
 - 로그 스키마에 shadow 필드 추가
+
+---
+
+# 작업 기록: 부하/Chaos 테스트 자동화 확장
+
+## 작업 목적
+- 단계 A-4를 실제 수행 가능하도록 k6 스크립트와 chaos 토글을 보강했습니다.
+
+## 변경 파일
+- `ops/testing/k6_baseline.js`
+- `ops/testing/k6_spike.js`
+- `ops/testing/load_test.md`
+- `ops/testing/chaos_test.md`
+- `ops/testing/chaos_toggle.sh`
+- `serving/mock-worker/app.py`
+- `serving/mock-worker/README.md`
+- `worklog.md`
+
+## 요약
+- Baseline/Spike 부하 스크립트 추가
+- delay/fail rate 기반 장애 주입 옵션 추가
+- 문서에 실행 방법 보강

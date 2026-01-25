@@ -47,6 +47,13 @@
 k6 run ops/testing/k6_smoke.js
 ```
 
+Baseline/Spike 예시:
+
+```bash
+k6 run ops/testing/k6_baseline.js
+k6 run ops/testing/k6_spike.js
+```
+
 환경 변수 예시:
 
 ```bash
