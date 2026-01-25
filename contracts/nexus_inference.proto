@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package nexus.inference.v1;
+
+service InferenceService {
+  rpc ChatCompletion(ChatCompletionRequest) returns (ChatCompletionResponse);
+  rpc Health(HealthRequest) returns (HealthResponse);
+}
+
+message ChatCompletionRequest {
+  string request_id = 1;
+  string trace_id = 2;
+  string idempotency_key = 3;
+  string model = 4;
+  repeated Message messages = 5;
+  map<string, string> metadata = 6;
+}
+
+message Message {
+  string role = 1;
+  string content = 2;
+}
+
+message ChatCompletionResponse {
+  string request_id = 1;
+  string trace_id = 2;
+  string model = 3;
+  string output = 4;
+  double latency_ms = 5;
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+  string status = 1;
+}

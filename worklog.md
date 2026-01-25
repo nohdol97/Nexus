@@ -34,6 +34,46 @@
   - **왜 필요?** 통일된 방식으로 요청/응답을 주고받기 위해.
   - **어디에?** `/v1/chat/completions` 같은 엔드포인트.
 
+- **MSA(Microservices Architecture, 마이크로서비스 아키텍처)**: 큰 서비스를 여러 개의 작은 서비스로 분리해 운영하는 방식.
+  - **왜 필요?** 서비스별 독립 배포/확장/장애 격리가 쉬워짐.
+  - **어디에?** `docs/msa_communication.md`의 통신 원칙.
+
+- **REST**: HTTP 기반의 서비스 통신 규칙(JSON 요청/응답).
+  - **왜 필요?** 내부/외부 서비스가 가장 보편적으로 통신할 수 있음.
+  - **어디에?** `docs/msa_communication.md` REST 가이드.
+
+- **gRPC**: 바이너리(Protocol Buffers) 기반의 고성능 RPC 통신.
+  - **왜 필요?** 내부 서비스 간 고TPS/저지연 통신에 유리.
+  - **어디에?** `contracts/nexus_inference.proto`, `docs/msa_communication.md`.
+
+- **RPC(Remote Procedure Call, 원격 프로시저 호출)**: 네트워크 너머의 함수를 로컬 호출처럼 실행하는 방식.
+  - **왜 필요?** 서비스 간 호출을 단순한 함수 호출처럼 만들기 위해.
+  - **어디에?** `contracts/nexus_inference.proto`의 `service`/`rpc` 정의.
+
+- **Protobuf(Protocol Buffers)**: gRPC 메시지 스키마를 정의하는 직렬화 형식.
+  - **왜 필요?** 서비스 간 계약을 엄격하게 맞추고 성능을 확보하기 위해.
+  - **어디에?** `contracts/nexus_inference.proto`.
+
+- **Field Number(필드 번호)**: Protobuf 필드에 붙는 고유 번호(예: `= 1`, `= 2`).
+  - **왜 필요?** 호환성을 유지하기 위한 식별자(변경 금지).
+  - **어디에?** `contracts/nexus_inference.proto`.
+
+- **Idempotency(멱등성)**: 같은 요청을 여러 번 보내도 결과가 동일하게 유지되는 성질.
+  - **왜 필요?** 재시도 시 중복 처리/중복 과금/중복 생성 방지.
+  - **어디에?** `Idempotency-Key` 헤더, `docs/msa_communication.md`.
+
+- **Timeout/Deadline(타임아웃/데드라인)**: 요청 처리에 허용되는 최대 시간.
+  - **왜 필요?** 지연이 길어지는 요청을 빠르게 차단하고 장애 전파를 방지.
+  - **어디에?** `docs/msa_communication.md` 타임아웃 가이드.
+
+- **Saga(사가 패턴)**: 분산 트랜잭션을 단계별 보상 작업으로 관리하는 방식.
+  - **왜 필요?** 여러 서비스가 얽힌 작업을 안정적으로 완료/복구하기 위해.
+  - **어디에?** `docs/msa_communication.md` 트랜잭션 패턴.
+
+- **Outbox 패턴**: DB 변경과 이벤트 발행을 분리하지 않고 함께 기록하는 방식.
+  - **왜 필요?** 데이터 변경과 이벤트 전파의 일관성을 확보하기 위해.
+  - **어디에?** `docs/msa_communication.md` 트랜잭션 패턴.
+
 - **API Key(키)**: 간단한 인증 수단(비밀번호 같은 역할).
   - **왜 필요?** 아무나 호출하지 못하도록 접근 제어.
   - **어디에?** `X-API-Key` 헤더로 전송.
@@ -1924,3 +1964,46 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - 자주 쓰는 옵션(단축어)과 파이프/리다이렉션 등 셸 문법 설명 추가
+
+---
+
+# 작업 기록: MSA 통신 가이드 및 gRPC 계약 초안 추가
+
+## 작업 목적
+- 단계 A의 "MSA 통신" 항목을 문서화하고, 서비스 간 계약을 표준화하기 위한 gRPC proto 초안을 추가했습니다.
+
+## 변경 파일
+- `docs/msa_communication.md`
+- `contracts/nexus_inference.proto`
+
+## 요약
+- REST/gRPC 통신 원칙, 헤더, 에러 포맷, 타임아웃/재시도 기준 정리
+- gRPC 기본 서비스/메시지 스키마 초안 추가
+
+---
+
+# 작업 기록: proto 이해 가이드 추가
+
+## 작업 목적
+- gRPC proto 파일을 읽는 방법을 문서에 추가해 비개발자도 구조를 이해할 수 있도록 했습니다.
+
+## 변경 파일
+- `docs/msa_communication.md`
+- `worklog.md`
+
+## 요약
+- proto 핵심 구성요소(service/rpc/message/field number) 설명 추가
+- RPC/필드 번호 용어 설명 추가
+
+---
+
+# 작업 기록: MSA 통신 가이드 한글화
+
+## 작업 목적
+- MSA 통신 가이드를 한글로 정리해 이해도를 높였습니다.
+
+## 변경 파일
+- `docs/msa_communication.md`
+
+## 요약
+- REST/gRPC 통신 원칙과 proto 읽는 법을 한국어로 정리
