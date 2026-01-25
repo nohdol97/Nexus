@@ -5,7 +5,7 @@
 ## 대상
 - Saved Query (KQL)
 - Saved Search (Discover)
-- Dashboard (기본 패널 포함)
+- Dashboard (기본 패널 여러 개 포함)
 
 ## 스크립트
 - `ops/logging/bootstrap_kibana_saved_objects.sh`
@@ -30,8 +30,11 @@ DATA_VIEW_ID=<data-view-id> ./ops/logging/bootstrap_kibana_saved_objects.sh
   - Gateway Rate Limit (status = 429)
 - Saved Search
   - Gateway Errors (5xx)
+  - Gateway Slow Requests (>1s)
+  - Gateway Rate Limit (429)
+  - Gateway Chat Completions
 - Dashboard
-  - Gateway Logs Dashboard (에러 로그 패널 1개 포함)
+  - Gateway Logs Dashboard (4개 패널 포함)
 
 ## 참고
-- 대시보드에는 기본 패널 1개만 포함됩니다. 필요 시 Kibana UI에서 패널을 추가하세요.
+- 대시보드에는 기본 패널 4개가 포함됩니다. 필요 시 Kibana UI에서 패널을 추가하세요.

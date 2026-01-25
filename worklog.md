@@ -1723,6 +1723,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ---
 
+# 작업 기록: Kibana 대시보드 패널 확장
+
+## 작업 목적
+- 로그 대시보드에 기본 패널을 4개로 확장했습니다.
+
+## 변경 파일
+- `ops/logging/kibana_saved_objects.ndjson`
+- `ops/logging/kibana_saved_objects.md`
+
+## 요약
+- Errors/Slow/RateLimit/Chat 패널 구성 추가
+
+---
+
 # 작업 기록: NDJSON 용어 설명 추가
 
 ## 작업 목적
