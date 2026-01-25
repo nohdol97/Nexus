@@ -9,6 +9,20 @@
     "from": "now-15m",
     "to": "now"
   },
+  "links": [
+    {
+      "type": "link",
+      "title": "Kibana Logs Dashboard",
+      "url": "http://localhost:5601/app/dashboards#/view/gateway-logs-dashboard",
+      "targetBlank": true
+    },
+    {
+      "type": "link",
+      "title": "Kibana Discover (time range)",
+      "url": "http://localhost:5601/app/discover#/?_g=(time:(from:'${__from:date:iso}',to:'${__to:date:iso}'))",
+      "targetBlank": true
+    }
+  ],
   "panels": [
     {
       "id": 1,

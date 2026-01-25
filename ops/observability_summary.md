@@ -23,6 +23,9 @@ docker compose -f docker-compose.yml -f docker-compose.logging.yml up -d
 - Kibana: http://localhost:5601
 - Alertmanager: http://localhost:9093
 
+## Grafana → Kibana 링크
+- Grafana 대시보드 상단 링크로 Kibana Dashboard/Discover 이동
+
 ## 핵심 문서
 - SLO/Runbook: `ops/slo_runbook.md`
 - Runbook Quickstart: `ops/runbook_quickstart.md`

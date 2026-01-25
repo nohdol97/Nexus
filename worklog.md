@@ -154,6 +154,10 @@
   - **왜 필요?** 현재 구성/접근 경로를 빠르게 파악하기 위해.
   - **어디에?** `ops/observability_summary.md`.
 
+- **Dashboard Link(대시보드 링크)**: Grafana 대시보드에서 외부 시스템으로 이동하는 링크.
+  - **왜 필요?** 지표에서 바로 로그 화면으로 이동하기 위해.
+  - **어디에?** `ops/grafana/provisioning/dashboards/nexus-gateway.json`.
+
 - **Bootstrap Script(부트스트랩 스크립트)**: 초기 설정을 자동으로 구성하는 스크립트.
   - **왜 필요?** 데이터 뷰/저장 객체 등을 반복 없이 생성하기 위해.
   - **어디에?** `ops/observability_bootstrap.sh`.
@@ -1820,6 +1824,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - `bootstrap_kibana.sh` + `bootstrap_kibana_saved_objects.sh` 연계 실행
+
+---
+
+# 작업 기록: Grafana → Kibana 링크 추가
+
+## 작업 목적
+- Grafana 대시보드에서 Kibana Dashboard/Discover로 바로 이동할 수 있도록 링크를 추가했습니다.
+
+## 변경 파일
+- `ops/grafana/provisioning/dashboards/nexus-gateway.json`
+- `ops/observability_summary.md`
+
+## 요약
+- Kibana 대시보드 및 Discover 링크 추가
 
 ---
 
