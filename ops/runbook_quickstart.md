@@ -32,7 +32,12 @@ curl -s -X POST http://localhost:8000/v1/chat/completions \
 curl -s "http://localhost:9200/_cat/indices?v" | rg gateway
 ```
 
-## 5) Restore
+## 5) Alert Test
+```bash
+./ops/alerts/test_alert.sh
+```
+
+## 6) Restore
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.logging.yml start gateway
 ```

@@ -1696,6 +1696,20 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ---
 
+# 작업 기록: 알림 테스트 절차 문서 보강
+
+## 작업 목적
+- 관측 체크리스트와 Runbook Quickstart에 알림 테스트 절차를 추가했습니다.
+
+## 변경 파일
+- `ops/observability_status.md`
+- `ops/runbook_quickstart.md`
+
+## 요약
+- Alertmanager 테스트 알림 실행 단계 추가
+
+---
+
 # 작업 기록: Kibana 대시보드 템플릿 추가
 
 ## 작업 목적

@@ -24,7 +24,12 @@ docker compose -f docker-compose.yml -f docker-compose.logging.yml ps
 - URL: http://localhost:9093
 - Active Alerts 탭 확인
 
-## 6) Quick Log Flow Test
+## 6) Alert Test (Alertmanager)
+```bash
+./ops/alerts/test_alert.sh
+```
+
+## 7) Quick Log Flow Test
 ```bash
 curl -s -X POST http://localhost:8000/v1/chat/completions \
   -H 'Content-Type: application/json' \
