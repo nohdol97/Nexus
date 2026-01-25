@@ -93,13 +93,25 @@
 
 ---
 
-## 🔧 추가로 강화하면 좋은 항목
+## 🔧 추가로 강화하면 좋은 항목 (단계별)
 
+### 단계 A (단기 · 운영 안정화)
 - **MSA 통신**: REST/gRPC 기반 서비스 간 통신 및 트랜잭션 처리 설계
+- **보안 강화**: mTLS/서비스 간 인증, PII 마스킹, 감사 로그 표준화
+- **트래픽 안전장치**: Shadow Traffic(미러링) + 안정성 검증 흐름 추가
+- **부하/장애 테스트**: 부하 테스트 시나리오와 장애 주입(Chaos) 최소 세트
+
+### 단계 B (중기 · 서빙/인프라 고도화)
 - **고급 라우팅**: disaggregated serving, prefix-aware routing, context caching 적용
 - **K8s 확장**: Operator/Scheduler 커스터마이징으로 GPU 효율 최적화
+- **배포 전략**: Blue/Green + Canary 운영 시나리오 표준화
+- **비용 최적화(FinOps)**: GPU 사용량 기반 비용 리포트 및 정책 수립
+
+### 단계 C (장기 · 플랫폼 확장)
 - **Public Cloud**: AWS SageMaker/Bedrock 또는 Azure AI 환경 비교 검토
 - **학습 파이프라인**: 금융 도메인 대규모 학습/재학습 환경 구축
+- **DR(재해 복구)**: 멀티 리전/백업 복구 전략 수립
+- **데이터 거버넌스**: 데이터 품질/버전/접근 제어 체계 수립
 
 ## 📝 이력서 하이라이트 (Key Achievements)
 
@@ -108,12 +120,3 @@
 > - **장애 복구**: FastAPI & LiteLLM 기반 Fallback 시스템 설계로 서비스 연속성 확보
 > - **성능 최적화**: vLLM 서빙 최적화를 통한 추론 속도 2배 향상 및 GPU 활용률 극대화
 > - **모니터링**: Prometheus 기반 실시간 관측 체계를 통한 MTTD(장애 인지 시간) 단축
-
----
-
-## 🛠️ 다음 실행 단계
-현재 가장 먼저 시작하기 좋은 단계는 **"FastAPI + LiteLLM 멀티 모델 라우팅"**입니다.
-
-1. [[FastAPI]] 기반 Gateway 골격 구축 (Auth/Route/Rate Limit/Circuit Breaker 포함)
-2. [[LiteLLM]]으로 멀티 모델 라우팅 및 Fallback 정책 구현
-3. [[Prometheus]] 메트릭 + 구조화 로그를 붙인 뒤 [[Docker]] 이미지화
