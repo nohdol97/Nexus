@@ -22,6 +22,7 @@
 | principal_hash | 호출 주체 해시 | `a1b2c3d4e5f67890` |
 | audit_outcome | 감사 로그 결과 | `allow` / `deny` |
 | audit_reason | 거부 사유 | `invalid_api_key` |
+| shadow | shadow 요청 여부 | `true` |
 
 ## 활용 예시
 

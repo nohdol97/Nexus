@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import time
 import uuid
 from contextlib import asynccontextmanager
@@ -20,6 +21,8 @@ from app.core.metrics import (
     RATE_LIMITED,
     REQUEST_COUNT,
     REQUEST_LATENCY,
+    SHADOW_LATENCY,
+    SHADOW_REQUESTS,
     UPSTREAM_LATENCY,
     UPSTREAM_REQUESTS,
 )
@@ -31,6 +34,7 @@ from app.core.rate_limiter import (
     RedisRateLimiter,
 )
 from app.core.redaction import mask_ip
+from app.core.shadow import should_shadow
 from app.core.security import AuthContext, require_auth
 from app.schemas import ChatCompletionRequest
 from app.services.proxy import ProxyClient, UpstreamError
@@ -90,6 +94,37 @@ def _log_extra(request: Request, status_code: int, duration_ms: int) -> dict[str
         "client_ip": mask_ip(request.client.host if request.client else None),
     }
     return {key: value for key, value in extra.items() if value is not None}
+
+
+async def _dispatch_shadow(
+    proxy: ProxyClient,
+    upstream: Upstream,
+    payload: ChatCompletionRequest,
+    headers: dict[str, str],
+    request_id: str | None,
+    trace_id: str | None,
+) -> None:
+    shadow_headers = {**headers, "x-shadow": "true"}
+    start = time.perf_counter()
+    try:
+        await proxy.forward(upstream, "/v1/chat/completions", payload, shadow_headers)
+    except UpstreamError as exc:
+        SHADOW_REQUESTS.labels(upstream.name, "error").inc()
+        SHADOW_LATENCY.labels(upstream.name).observe(time.perf_counter() - start)
+        logger.warning(
+            "shadow_request_failed",
+            extra={
+                "event": "shadow_request_failed",
+                "upstream": upstream.name,
+                "shadow": True,
+                "error": str(exc),
+                "request_id": request_id,
+                "trace_id": trace_id,
+            },
+        )
+        return
+    SHADOW_REQUESTS.labels(upstream.name, "success").inc()
+    SHADOW_LATENCY.labels(upstream.name).observe(time.perf_counter() - start)
 
 
 @app.middleware("http")
@@ -182,6 +217,10 @@ async def chat_completions(
     allowed_models = auth.allowed_models
     errors: list[str] = []
     seen: set[str] = set()
+    shadow_task: asyncio.Task[None] | None = None
+    shadow_target = settings.shadow_target
+    shadow_enabled = settings.shadow_enabled and shadow_target
+    shadow_ratio = max(0, min(100, int(settings.shadow_percent)))
 
     for model_name in candidates:
         if model_name in seen:
@@ -209,6 +248,25 @@ async def chat_completions(
             CIRCUIT_OPEN.labels(upstream.name).inc()
             errors.append(f"{model_name}: circuit open")
             continue
+
+        if (
+            shadow_task is None
+            and shadow_enabled
+            and should_shadow(request.state.request_id, shadow_ratio)
+            and shadow_target
+        ):
+            shadow_upstream = route_selector.get(shadow_target)
+            if shadow_upstream and shadow_upstream.name != upstream.name:
+                shadow_task = asyncio.create_task(
+                    _dispatch_shadow(
+                        proxy,
+                        shadow_upstream,
+                        payload,
+                        forward_headers,
+                        request.state.request_id,
+                        request.state.trace_id,
+                    )
+                )
 
         candidate_payload = payload
         if model_name != payload.model:

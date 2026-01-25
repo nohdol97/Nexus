@@ -117,3 +117,6 @@ class RouteSelector:
 
     def all(self) -> list[Upstream]:
         return list(self._upstreams.values())
+
+    def get(self, name: str) -> Upstream | None:
+        return self._upstreams.get(name)

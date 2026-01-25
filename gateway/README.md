@@ -53,6 +53,9 @@ All settings use the `GATEWAY_` prefix.
 - `GATEWAY_PII_MASKING_ENABLED` (default: `true`)
 - `GATEWAY_PII_HASH_SALT` (optional; hash salt for redaction)
 - `GATEWAY_AUDIT_LOGGING_ENABLED` (default: `true`)
+- `GATEWAY_SHADOW_ENABLED` (default: `false`)
+- `GATEWAY_SHADOW_PERCENT` (default: `0`)
+- `GATEWAY_SHADOW_TARGET` (optional; upstream name)
 
 ## Observability
 

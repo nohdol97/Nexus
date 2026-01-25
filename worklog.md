@@ -274,6 +274,14 @@
   - **왜 필요?** 신규 모델/버전을 운영 트래픽과 분리해 검증하기 위해.
   - **어디에?** `docs/shadow_traffic.md`.
 
+- **Shadow Percent(미러링 비율)**: 전체 요청 중 몇 %를 복제할지 정하는 값.
+  - **왜 필요?** 운영 영향 없이 검증 범위를 조절하기 위해.
+  - **어디에?** `gateway/app/core/config.py`, `docs/shadow_traffic.md`.
+
+- **Shadow Metrics(미러링 지표)**: shadow 요청의 성공/실패/지연 시간을 기록하는 메트릭.
+  - **왜 필요?** shadow 경로의 건강 상태를 확인하기 위해.
+  - **어디에?** `gateway/app/core/metrics.py`.
+
 - **Disaggregated Serving(분리 서빙)**: 프리필/디코딩 등 서빙 단계를 분리해 처리하는 방식.
   - **왜 필요?** GPU 자원을 효율적으로 쓰고 병목을 줄이기 위해.
   - **어디에?** `plan.md` 단계 B 강화 항목.
@@ -2377,3 +2385,42 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - REST → gRPC 변환 흐름과 관련 코드 경로 설명 추가
+
+---
+
+# 작업 기록: gRPC 업스트림 로컬 연동 테스트
+
+## 작업 목적
+- Gateway가 gRPC 워커를 호출하는 경로를 로컬에서 검증했습니다.
+
+## 테스트 내용
+- gRPC 워커 실행 (`serving/mock-worker/grpc_server.py`)
+- Gateway 실행 (업스트림: `grpc://localhost:50051`)
+- `/v1/chat/completions` 요청으로 응답 확인
+
+## 비고
+- 로컬 실행 시 `redis` 패키지가 필요했습니다.
+
+---
+
+# 작업 기록: Shadow Traffic 실제 미러링 구현
+
+## 작업 목적
+- Shadow Traffic을 실제로 동작시키기 위해 Gateway에 미러링 로직과 메트릭을 추가했습니다.
+
+## 변경 파일
+- `gateway/app/core/config.py`
+- `gateway/app/core/shadow.py`
+- `gateway/app/core/metrics.py`
+- `gateway/app/services/router.py`
+- `gateway/app/main.py`
+- `gateway/app/core/logging.py`
+- `docs/shadow_traffic.md`
+- `gateway/README.md`
+- `ops/logging/log_schema.md`
+- `worklog.md`
+
+## 요약
+- `GATEWAY_SHADOW_*` 설정 추가
+- shadow 요청 비동기 전송 + 성공/실패 메트릭 기록
+- 로그 스키마에 shadow 필드 추가

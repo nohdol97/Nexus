@@ -42,6 +42,13 @@ shadow:
   target: "shadow-model"
 ```
 
+Gateway 환경 변수 예시:
+```bash
+GATEWAY_SHADOW_ENABLED=true
+GATEWAY_SHADOW_PERCENT=5
+GATEWAY_SHADOW_TARGET=shadow-model
+```
+
 ---
 
 ## 5) 안전장치

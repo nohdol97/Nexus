@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     pii_masking_enabled: bool = True
     pii_hash_salt: str | None = None
     audit_logging_enabled: bool = True
+    shadow_enabled: bool = False
+    shadow_percent: int = 0
+    shadow_target: str | None = None
 
     def api_key_set(self) -> set[str]:
         if not self.api_keys:

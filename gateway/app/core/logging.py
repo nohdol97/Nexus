@@ -25,6 +25,7 @@ class JsonFormatter(logging.Formatter):
             "upstream",
             "fallback_model",
             "client_ip",
+            "shadow",
             "auth_method",
             "principal_hash",
             "audit_outcome",
