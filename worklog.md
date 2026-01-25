@@ -226,6 +226,14 @@
   - **왜 필요?** 운영에 영향 없이 새 기능을 검증하기 위해.
   - **어디에?** `plan.md` 강화 항목.
 
+- **Shadow Policy(미러링 정책)**: 어떤 요청을 어느 비율로 복제할지 정하는 규칙.
+  - **왜 필요?** 성능 검증 범위를 안전하게 조절하기 위해.
+  - **어디에?** `docs/shadow_traffic.md`, `gateway/app/core/shadow.py`.
+
+- **Shadow Target(미러링 대상)**: 복제된 요청을 보내는 별도 업스트림.
+  - **왜 필요?** 신규 모델/버전을 운영 트래픽과 분리해 검증하기 위해.
+  - **어디에?** `docs/shadow_traffic.md`.
+
 - **Chaos(혼돈 테스트)**: 일부 장애를 의도적으로 발생시켜 복원력을 검증하는 테스트.
   - **왜 필요?** 장애 대응 체계를 검증하기 위해.
   - **어디에?** `plan.md` 강화 항목.
@@ -249,6 +257,22 @@
 - **Throughput(TPS, 처리량)**: 초당 처리 가능한 요청 수.
   - **왜 필요?** 시스템이 얼마나 많은 요청을 감당하는지 판단하기 위해.
   - **어디에?** `ops/perf_tuning_report.md` 지표 항목.
+
+- **Load Test(부하 테스트)**: 일정 트래픽을 지속적으로 주어 성능을 측정하는 테스트.
+  - **왜 필요?** 안정적인 처리량/지연 시간을 확인하기 위해.
+  - **어디에?** `ops/testing/load_test.md`.
+
+- **Spike Test(급증 테스트)**: 짧은 시간에 트래픽을 급격히 올려 보는 테스트.
+  - **왜 필요?** 갑작스러운 트래픽 폭증 대응 능력을 확인하기 위해.
+  - **어디에?** `ops/testing/load_test.md`.
+
+- **RPS(Requests Per Second)**: 초당 요청 수.
+  - **왜 필요?** 부하 테스트 강도를 수치로 관리하기 위해.
+  - **어디에?** `ops/testing/load_test.md`.
+
+- **k6**: 부하 테스트를 수행하는 CLI 도구.
+  - **왜 필요?** HTTP 부하 테스트를 손쉽게 실행하기 위해.
+  - **어디에?** `ops/testing/k6_smoke.js`.
 
 - **Latency Percentile(p50/p95/p99)**: 지연시간 분포의 분위수.
   - **왜 필요?** 평균이 아닌 “느린 요청” 구간을 파악하기 위해.
@@ -2042,3 +2066,36 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 - mTLS/S2S 인증/PII 마스킹/감사 로그 기준 정리
 - 클라이언트 IP 마스킹 및 감사 로그 이벤트 추가
 - 설정값(GATEWAY_PII_MASKING_ENABLED, GATEWAY_PII_HASH_SALT, GATEWAY_AUDIT_LOGGING_ENABLED) 추가
+
+---
+
+# 작업 기록: Shadow Traffic 가이드 및 스캐폴딩 추가
+
+## 작업 목적
+- 단계 A의 "Shadow Traffic" 항목을 문서화하고, 최소 스캐폴딩을 추가했습니다.
+
+## 변경 파일
+- `docs/shadow_traffic.md`
+- `gateway/app/core/shadow.py`
+
+## 요약
+- 미러링 트래픽 동작 방식, 안전장치, 관측 포인트 정리
+- Shadow 정책 구조 스캐폴딩 추가
+
+---
+
+# 작업 기록: 부하/Chaos 테스트 최소 세트 추가
+
+## 작업 목적
+- 단계 A의 "부하/장애 테스트" 항목을 문서화하고, 최소 실행 예시를 추가했습니다.
+
+## 변경 파일
+- `ops/testing/load_test.md`
+- `ops/testing/chaos_test.md`
+- `ops/testing/k6_smoke.js`
+- `worklog.md`
+
+## 요약
+- Smoke/Baseline/Spike 시나리오와 관측 지표 정리
+- 최소 장애 주입 시나리오 정의
+- k6 기본 스모크 테스트 스크립트 추가
