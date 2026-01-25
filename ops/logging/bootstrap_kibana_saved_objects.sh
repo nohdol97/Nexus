@@ -2,7 +2,36 @@
 set -euo pipefail
 
 KIBANA_URL=${KIBANA_URL:-http://localhost:5601}
-DATA_VIEW_ID=${DATA_VIEW_ID:-}
+DATA_VIEW_TITLE=${DATA_VIEW_TITLE:-gateway-logs-*}
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+fetch_data_view_id() {
+  curl -s "${KIBANA_URL}/api/saved_objects/_find?type=index-pattern&search=${DATA_VIEW_TITLE}&search_fields=title" \
+    -H 'kbn-xsrf: true' | python3 - <<'PY'
+import json,sys
+try:
+    data=json.load(sys.stdin)
+    items=data.get('saved_objects',[])
+    if items:
+        print(items[0].get('id',''))
+    else:
+        print('')
+except Exception:
+    print('')
+PY
+}
+
+# Ensure data view exists
+DATA_VIEW_ID=$(fetch_data_view_id)
+if [[ -z "${DATA_VIEW_ID}" ]]; then
+  "${SCRIPT_DIR}/bootstrap_kibana.sh" >/dev/null
+  DATA_VIEW_ID=$(fetch_data_view_id)
+fi
+
+if [[ -z "${DATA_VIEW_ID}" ]]; then
+  echo "Failed to find or create data view: ${DATA_VIEW_TITLE}" >&2
+  exit 1
+fi
 
 create_saved_query() {
   local id="$1"
@@ -19,30 +48,20 @@ create_saved_query() {
   echo "Saved query created: ${title}"
 }
 
-create_dashboard() {
-  local id="$1"
-  local title="$2"
-  local description="$3"
-
-  local search_source
-  if [[ -n "${DATA_VIEW_ID}" ]]; then
-    search_source="{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[],\"index\":\"${DATA_VIEW_ID}\"}"
-  else
-    search_source="{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
-  fi
-
-  curl -s -X POST "${KIBANA_URL}/api/saved_objects/dashboard/${id}?overwrite=true" \
-    -H 'kbn-xsrf: true' \
-    -H 'Content-Type: application/json' \
-    -d "{\"attributes\":{\"title\":\"${title}\",\"description\":\"${description}\",\"panelsJSON\":\"[]\",\"optionsJSON\":\"{}\",\"timeRestore\":false,\"kibanaSavedObjectMeta\":{\"searchSourceJSON\":\"${search_source//"/\\\"}\"}}}" \
-    >/dev/null
-
-  echo "Dashboard created: ${title}"
-}
-
 create_saved_query "gateway-errors" "Gateway Errors" "status >= 500" "5xx 에러 로그"
 create_saved_query "gateway-slow" "Gateway Slow Requests" "duration_ms > 1000" "1초 초과 요청"
-create_saved_query "gateway-chat" "Gateway Chat Completions" "path : \"/v1/chat/completions\"" "채팅 엔드포인트"
+create_saved_query "gateway-chat" "Gateway Chat Completions" "path : \\\"/v1/chat/completions\\\"" "채팅 엔드포인트"
 create_saved_query "gateway-rate-limit" "Gateway Rate Limit" "status = 429" "레이트 리밋 응답"
 
-create_dashboard "gateway-dashboard" "Gateway Logs Dashboard" "로그 기반 대시보드 템플릿"
+# Import dashboard + saved search
+TMP_FILE=$(mktemp)
+sed "s/__DATA_VIEW_ID__/${DATA_VIEW_ID}/g" "${SCRIPT_DIR}/kibana_saved_objects.ndjson" > "${TMP_FILE}"
+
+curl -s -X POST "${KIBANA_URL}/api/saved_objects/_import?overwrite=true" \
+  -H 'kbn-xsrf: true' \
+  -F file=@"${TMP_FILE}" \
+  >/dev/null
+
+rm -f "${TMP_FILE}"
+
+echo "Saved objects imported (dashboard + search)."
