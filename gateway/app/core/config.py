@@ -24,6 +24,9 @@ class Settings(BaseSettings):
     jwt_algorithms: str = "HS256"
     jwt_issuer: str | None = None
     jwt_audience: str | None = None
+    pii_masking_enabled: bool = True
+    pii_hash_salt: str | None = None
+    audit_logging_enabled: bool = True
 
     def api_key_set(self) -> set[str]:
         if not self.api_keys:

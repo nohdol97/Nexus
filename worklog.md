@@ -210,6 +210,18 @@
   - **왜 필요?** 로그/데이터에서 민감정보를 마스킹하기 위해.
   - **어디에?** `plan.md` 강화 항목.
 
+- **PII 마스킹(PII Masking)**: 로그에 민감 정보를 원문 대신 가공 형태로 저장하는 것.
+  - **왜 필요?** 개인정보 유출 위험을 줄이기 위해.
+  - **어디에?** `gateway/app/core/redaction.py`, `docs/security_baseline.md`.
+
+- **Audit Log(감사 로그)**: 누가 어떤 요청을 했는지 기록하는 보안 로그.
+  - **왜 필요?** 보안 감사/추적 가능성을 확보하기 위해.
+  - **어디에?** `gateway/app/core/security.py`, `docs/security_baseline.md`.
+
+- **Principal Hash(주체 해시)**: 호출 주체 식별자를 해시로 저장한 값.
+  - **왜 필요?** 감사 로그에 원문 노출 없이 추적성을 확보하기 위해.
+  - **어디에?** `gateway/app/core/redaction.py`.
+
 - **Shadow Traffic(미러링 트래픽)**: 실제 요청을 복제해 별도 경로로 보내는 방식.
   - **왜 필요?** 운영에 영향 없이 새 기능을 검증하기 위해.
   - **어디에?** `plan.md` 강화 항목.
@@ -2007,3 +2019,26 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 
 ## 요약
 - REST/gRPC 통신 원칙과 proto 읽는 법을 한국어로 정리
+
+---
+
+# 작업 기록: 보안 강화(PII 마스킹 + 감사 로그 + mTLS 가이드)
+
+## 작업 목적
+- 단계 A의 "보안 강화" 항목을 문서화하고, 게이트웨이에 PII 마스킹과 감사 로그 스키마를 추가했습니다.
+
+## 변경 파일
+- `docs/security_baseline.md`
+- `gateway/app/core/config.py`
+- `gateway/app/core/redaction.py`
+- `gateway/app/core/security.py`
+- `gateway/app/core/logging.py`
+- `gateway/app/main.py`
+- `gateway/README.md`
+- `ops/logging/log_schema.md`
+- `worklog.md`
+
+## 요약
+- mTLS/S2S 인증/PII 마스킹/감사 로그 기준 정리
+- 클라이언트 IP 마스킹 및 감사 로그 이벤트 추가
+- 설정값(GATEWAY_PII_MASKING_ENABLED, GATEWAY_PII_HASH_SALT, GATEWAY_AUDIT_LOGGING_ENABLED) 추가

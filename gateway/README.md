@@ -50,6 +50,9 @@ All settings use the `GATEWAY_` prefix.
 - `GATEWAY_JWT_SECRET` / `GATEWAY_JWT_PUBLIC_KEY` (optional; enable JWT validation)
 - `GATEWAY_JWT_ALGORITHMS` (default: `HS256`)
 - `GATEWAY_JWT_ISSUER` / `GATEWAY_JWT_AUDIENCE` (optional)
+- `GATEWAY_PII_MASKING_ENABLED` (default: `true`)
+- `GATEWAY_PII_HASH_SALT` (optional; hash salt for redaction)
+- `GATEWAY_AUDIT_LOGGING_ENABLED` (default: `true`)
 
 ## Observability
 

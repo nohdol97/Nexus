@@ -17,7 +17,11 @@
 | status | HTTP 응답 코드 | `200` |
 | duration_ms | 처리 시간(ms) | `307` |
 | upstream | 라우팅된 업스트림 | `mock` |
-| client_ip | 클라이언트 IP | `172.64.66.1` |
+| client_ip | 클라이언트 IP (기본 마스킹) | `172.64.66.0` |
+| auth_method | 인증 방식 | `api_key` |
+| principal_hash | 호출 주체 해시 | `a1b2c3d4e5f67890` |
+| audit_outcome | 감사 로그 결과 | `allow` / `deny` |
+| audit_reason | 거부 사유 | `invalid_api_key` |
 
 ## 활용 예시
 
@@ -39,3 +43,4 @@
 ## 참고
 - 로그 스키마는 `gateway/app/core/logging.py`에서 정의됩니다.
 - 필요 시 필드를 확장하고, Kibana 데이터 뷰에 필드를 반영하세요.
+- `client_ip`는 기본적으로 마스킹되며, `GATEWAY_PII_MASKING_ENABLED=false`로 원문 유지가 가능합니다.

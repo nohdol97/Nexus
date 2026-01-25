@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import logging
 from typing import Any
 
 import jwt
-from fastapi import Header, HTTPException, status
+from fastapi import Header, HTTPException, Request, status
 
 from app.core.config import settings
+from app.core.redaction import hash_identifier, mask_ip
+
+logger = logging.getLogger("gateway")
 
 
 def _parse_bearer(authorization: str | None) -> str | None:
@@ -107,15 +111,41 @@ def _auth_from_jwt(token: str) -> AuthContext:
 
 
 def require_auth(
+    request: Request,
     x_api_key: str | None = Header(default=None, alias="X-API-Key"),
     authorization: str | None = Header(default=None, alias="Authorization"),
 ) -> AuthContext:
     bearer = _parse_bearer(authorization)
     if bearer and (settings.jwt_secret or settings.jwt_public_key):
-        return _auth_from_jwt(bearer)
+        try:
+            context = _auth_from_jwt(bearer)
+        except HTTPException as exc:
+            _log_audit_auth(
+                request=request,
+                outcome="deny",
+                auth_method="jwt",
+                principal=None,
+                reason=str(exc.detail),
+            )
+            raise
+        _log_audit_auth(
+            request=request,
+            outcome="allow",
+            auth_method="jwt",
+            principal=context.principal,
+            reason=None,
+        )
+        return context
 
     key = x_api_key or bearer
     if not key:
+        _log_audit_auth(
+            request=request,
+            outcome="deny",
+            auth_method="none",
+            principal=None,
+            reason="missing_credentials",
+        )
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Missing API key or JWT",
@@ -123,9 +153,51 @@ def require_auth(
 
     policy_map = settings.api_key_policy_map()
     if key not in settings.api_key_set() and key not in policy_map:
+        _log_audit_auth(
+            request=request,
+            outcome="deny",
+            auth_method="api_key",
+            principal=key,
+            reason="invalid_api_key",
+        )
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Invalid API key",
         )
 
-    return _auth_from_api_key(key)
+    context = _auth_from_api_key(key)
+    _log_audit_auth(
+        request=request,
+        outcome="allow",
+        auth_method="api_key",
+        principal=key,
+        reason=None,
+    )
+    return context
+
+
+def _log_audit_auth(
+    *,
+    request: Request,
+    outcome: str,
+    auth_method: str,
+    principal: str | None,
+    reason: str | None,
+) -> None:
+    if not settings.audit_logging_enabled:
+        return
+    logger.info(
+        "audit_auth",
+        extra={
+            "event": "audit_auth",
+            "request_id": getattr(request.state, "request_id", None),
+            "trace_id": getattr(request.state, "trace_id", None),
+            "method": request.method,
+            "path": request.url.path,
+            "client_ip": mask_ip(request.client.host if request.client else None),
+            "auth_method": auth_method,
+            "principal_hash": hash_identifier(principal),
+            "audit_outcome": outcome,
+            "audit_reason": reason,
+        },
+    )

@@ -30,6 +30,7 @@ from app.core.rate_limiter import (
     RateLimiterBase,
     RedisRateLimiter,
 )
+from app.core.redaction import mask_ip
 from app.core.security import AuthContext, require_auth
 from app.schemas import ChatCompletionRequest
 from app.services.proxy import ProxyClient, UpstreamError
@@ -86,7 +87,7 @@ def _log_extra(request: Request, status_code: int, duration_ms: int) -> dict[str
         "upstream": getattr(request.state, "upstream", None),
         "fallback_model": getattr(request.state, "fallback_model", None),
         "rate_limited": getattr(request.state, "rate_limited", None),
-        "client_ip": request.client.host if request.client else None,
+        "client_ip": mask_ip(request.client.host if request.client else None),
     }
     return {key: value for key, value in extra.items() if value is not None}
 
