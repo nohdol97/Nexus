@@ -1,28 +1,28 @@
-# Nexus: Enterprise AI Platform
+# Nexus: 엔터프라이즈 AI 플랫폼
 
-Nexus is a high-availability LLM inference platform designed for enterprise environments, built with FastAPI, vLLM, and Kubernetes.
+Nexus는 엔터프라이즈 환경을 위해 설계된 고가용성 LLM 추론 플랫폼으로, FastAPI, vLLM, Kubernetes를 기반으로 구축되었습니다.
 
-## 📂 Project Structure
+## 📂 프로젝트 구조
 
-- **`ui/`**: Nexus Console web application (Next.js + TypeScript).
-- **`Agent.md`**: Implementation rules and guidelines.
-- **`plan.md`**: Detailed project roadmap and architecture.
+- **`ui/`**: Nexus 콘솔 웹 애플리케이션 (Next.js + TypeScript).
+- **`Agent.md`**: 구현 규칙 및 가이드라인.
+- **`plan.md`**: 상세 프로젝트 로드맵 및 아키텍처.
 
-## 🚀 Getting Started
+## 🚀 시작하기
 
-### Nexus Console (UI)
+### Nexus 콘솔 (UI)
 
-The web console is located in the `ui` directory.
+웹 콘솔은 `ui` 디렉토리에 위치해 있습니다.
 
 ```bash
-# Navigate to the UI directory
+# UI 디렉토리로 이동
 cd ui
 
-# Install dependencies (if not already installed)
+# 의존성 설치 (아직 설치되지 않은 경우)
 npm install
 
-# Start the development server
+# 개발 서버 시작
 npm run dev
 ```
 
-The console will be available at http://localhost:3000.
+콘솔은 http://localhost:3000 에서 사용할 수 있습니다.
