@@ -1,47 +1,47 @@
-# Kubernetes Deployment
+# Kubernetes 배포
 
-This directory contains a minimal Kubernetes setup for the Nexus Gateway, model worker, and Redis.
+이 디렉토리는 Nexus Gateway, 모델 워커, Redis를 위한 최소 Kubernetes 구성입니다. 로컬 검증과 기본 배포 흐름을 빠르게 확인하기 위한 스캐폴딩이며, 운영 환경에서는 이미지/리소스/보안 설정을 실제 값으로 교체해야 합니다.
 
-## Apply
+## 적용
 
 ```bash
 kubectl apply -k k8s/
 ```
 
-## Kustomize overlays
+## Kustomize 오버레이
 
-Two overlays are provided:
+다음 오버레이가 제공됩니다.
 
-- `k8s/overlays/mock`: CPU-only mock worker (default behavior)
-- `k8s/overlays/gpu`: vLLM GPU worker (requires NVIDIA GPU nodes)
-- `k8s/overlays/bentoml`: BentoML worker (CPU, optional)
+- `k8s/overlays/mock`: CPU 전용 mock 워커 (기본)
+- `k8s/overlays/gpu`: vLLM GPU 워커 (NVIDIA GPU 노드 필요)
+- `k8s/overlays/bentoml`: BentoML 워커 (CPU, 옵션)
 
-Apply one of them like this:
+적용 예시:
 
 ```bash
 kubectl apply -k k8s/overlays/mock
-# or
+# 또는
 kubectl apply -k k8s/overlays/gpu
-# or
+# 또는
 kubectl apply -k k8s/overlays/bentoml
 ```
 
-Optional SGLang worker (GPU):
+옵션 SGLang 워커 (GPU):
 
 ```bash
 kubectl apply -k k8s/overlays/gpu/sglang
 ```
 
-Optional BentoML worker (CPU):
+옵션 BentoML 워커 (CPU):
 
 ```bash
 kubectl apply -k k8s/overlays/bentoml
 ```
 
-## Gateway routing example (vLLM + SGLang)
+## 게이트웨이 라우팅 예시 (vLLM + SGLang)
 
-If you enable both workers, add them to `GATEWAY_UPSTREAMS` and set a routing policy
-for the model ID you serve (example below uses Llama 3):
+두 워커를 모두 활성화했다면 `GATEWAY_UPSTREAMS`에 추가하고,
+모델 ID별 라우팅 정책을 설정하세요 (아래 예시는 Llama 3 기준).
 
 ```yaml
 GATEWAY_UPSTREAMS: "vllm=http://model-worker:8001;sglang=http://sglang-worker:8002"
@@ -52,25 +52,25 @@ GATEWAY_ROUTE_POLICIES: |
   }
 ```
 
-Note: The policy key must match the `model` string in the request payload.
+참고: 정책 키는 요청 payload의 `model` 문자열과 정확히 일치해야 합니다.
 
-## Local kind cluster (Mac/Windows/Linux)
+## 로컬 kind 클러스터 (Mac/Windows/Linux)
 
-kind is a local Kubernetes cluster for quick verification.
+kind는 로컬에서 빠르게 검증하기 위한 경량 Kubernetes 클러스터입니다.
 
 ```bash
-# 1) Create cluster
+# 1) 클러스터 생성
 kind create cluster --name nexus
 
-# 2) Build gateway + model worker images locally
+# 2) gateway + model worker 이미지 로컬 빌드
 docker build -t nexus-gateway:latest -f gateway/Dockerfile gateway
 docker build -t nexus-model-worker:latest -f serving/mock-worker/Dockerfile serving/mock-worker
 
-# 3) Load images into kind
+# 3) kind에 이미지 로드
 kind load docker-image nexus-gateway:latest --name nexus
 kind load docker-image nexus-model-worker:latest --name nexus
 
-# 4) Apply manifests
+# 4) 매니페스트 적용
 kubectl apply -k k8s/
 kubectl rollout status -n nexus deployment/nexus-gateway
 ```
@@ -78,39 +78,39 @@ kubectl rollout status -n nexus deployment/nexus-gateway
 ### Ingress (kind)
 
 ```bash
-# Install ingress-nginx for kind
+# kind용 ingress-nginx 설치
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 kubectl wait --namespace ingress-nginx --for=condition=ready pod \
   --selector=app.kubernetes.io/component=controller --timeout=120s
 
-# Port-forward ingress and test host routing
+# Ingress 포트포워딩 후 호스트 라우팅 테스트
 kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80
 curl -H "Host: gateway.local" http://localhost:8080/health
 ```
 
-### Service (ClusterIP) smoke test
+### Service (ClusterIP) 스모크 테스트
 
 ```bash
 kubectl -n nexus port-forward svc/nexus-gateway 8000:80
 curl http://localhost:8000/health
 ```
 
-### Notes for kind
-- LoadBalancer services stay in `<pending>` without MetalLB.
-- If you want to use `gateway.local` in a browser, add it to `/etc/hosts`.
+### kind 참고 사항
+- LoadBalancer 서비스는 MetalLB 없이 `<pending>` 상태로 남습니다.
+- 브라우저에서 `gateway.local`을 쓰려면 `/etc/hosts`에 추가해야 합니다.
 
-### LoadBalancer with MetalLB (kind)
+### MetalLB 로드밸런서 (kind)
 
 ```bash
-# Install MetalLB
+# MetalLB 설치
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.8/config/manifests/metallb-native.yaml
 kubectl wait --namespace metallb-system --for=condition=ready pod \
   --selector=app.kubernetes.io/component=controller --timeout=120s
 
-# Find the kind network IPv4 subnet (use a free IP range inside it)
+# kind 네트워크 IPv4 서브넷 확인 (그 안에서 사용 가능한 IP 범위를 선택)
 docker network inspect kind -f '{{range .IPAM.Config}}{{if .Gateway}}{{.Subnet}}{{end}}{{end}}'
 
-# Example: if subnet is 172.20.0.0/16, pick a small range like 172.20.255.200-172.20.255.250
+# 예시: 서브넷이 172.20.0.0/16이라면 172.20.255.200-172.20.255.250 같은 작은 범위를 선택
 cat <<'EOF' | kubectl apply -f -
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
@@ -128,47 +128,47 @@ metadata:
   namespace: metallb-system
 EOF
 
-# Check EXTERNAL-IP for the LoadBalancer service
+# LoadBalancer 서비스의 EXTERNAL-IP 확인
 kubectl get svc -n nexus
 ```
 
-Note: replace the example IP range with one that fits your `kind` subnet.
+참고: 예시 IP 범위는 실제 `kind` 서브넷에 맞게 변경하세요.
 
-## Build & push image
+## 이미지 빌드 및 푸시
 
 ```bash
 IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/build_push_gateway.sh
 ```
 
-## Model worker image (mock)
+## 모델 워커 이미지 (mock)
 
 ```bash
 docker build -t nexus-model-worker:latest -f serving/mock-worker/Dockerfile serving/mock-worker
 ```
 
-## GPU worker notes (vLLM)
+## GPU 워커 참고 (vLLM)
 
-- `MODEL_ID` in `k8s/overlays/gpu/model-worker-deployment.yaml`
-- Optional token in `k8s/overlays/gpu/model-worker-secret.yaml`
-  - `HF_TOKEN` is a Hugging Face access token for gated/private models
+- `MODEL_ID`는 `k8s/overlays/gpu/model-worker-deployment.yaml`에서 설정
+- 옵션 토큰은 `k8s/overlays/gpu/model-worker-secret.yaml`에 추가
+  - `HF_TOKEN`은 게이티드/프라이빗 모델용 Hugging Face 토큰
 
-## KServe/BentoML scaffolding
+## KServe/BentoML 스캐폴딩
 
-- KServe template: `k8s/kserve/inferenceservice.yaml`
-- BentoML placeholder: `serving/bentoml/README.md`
+- KServe 템플릿: `k8s/kserve/inferenceservice.yaml`
+- BentoML 플레이스홀더: `serving/bentoml/README.md`
 
-## Update deployment image
+## 배포 이미지 업데이트
 
 ```bash
 IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway_image.sh
 ```
 
-## Notes
-- Update `gateway/deployment.yaml` to point at a real image (for example, a registry image).
-- Redis is deployed as a single instance for rate limiting.
-- GPU overlay requires NVIDIA device plugin and GPU nodes.
-- Model worker HPA scales on CPU utilization by default.
-- vLLM GPU worker uses `/data` for model cache and `HF_TOKEN` from `model-worker-secrets`.
+## 참고 사항
+- `gateway/deployment.yaml`을 실제 레지스트리 이미지로 변경하세요.
+- Redis는 속도 제한을 위한 단일 인스턴스로 배포됩니다.
+- GPU 오버레이는 NVIDIA device plugin과 GPU 노드가 필요합니다.
+- 모델 워커 HPA는 기본적으로 CPU 사용률 기반입니다.
+- vLLM GPU 워커는 `/data`에 모델 캐시를 저장하며 `HF_TOKEN`을 사용합니다.
 
 ## 왜 GPU 노드풀을 쓰나요?
 
@@ -197,49 +197,3 @@ IMAGE_REPO=ghcr.io/your-org/nexus-gateway IMAGE_TAG=latest ./ops/k8s_set_gateway
 - GPU 노드풀을 별도로 분리하고 `nodepool=gpu` 라벨을 부여
 - GPU 전용 노드에는 `nvidia.com/gpu=true:NoSchedule` 같은 taint 적용
 - GPU 워크로드는 `nodeSelector` + `tolerations` 조합으로만 스케줄
-
-예시:
-
-```yaml
-nodeSelector:
-  nodepool: gpu
-tolerations:
-  - key: "nvidia.com/gpu"
-    operator: "Exists"
-    effect: "NoSchedule"
-```
-
-운영 팁:
-- A100/H100/B300 등 세대별로 노드풀을 분리하면 비용/성능 튜닝이 쉬움
-- 모델 워커별 리소스 스펙을 노드풀에 맞춰 표준화 (예: 1 GPU / 16Gi / 4 vCPU)
-
-## Expose the gateway
-
-Two options are provided:
-
-- LoadBalancer service: `k8s/gateway/service-lb.yaml`
-- Ingress (nginx): `k8s/gateway/ingress.yaml` (host: `gateway.local`)
-
-If you only want one, remove the other from `k8s/kustomization.yaml`.
-
-## GPU scheduling (model workers)
-
-When you add model workers (vLLM/SGLang/Triton), schedule them to GPU nodes:
-
-```yaml
-resources:
-  limits:
-    nvidia.com/gpu: "1"
-nodeSelector:
-  nodepool: gpu
-```
-
-## Smoke test
-
-```bash
-kubectl -n nexus port-forward svc/nexus-gateway 8000:80
-curl -X POST http://localhost:8000/v1/chat/completions \
-  -H "X-API-Key: dev-key" \
-  -H "Content-Type: application/json" \
-  -d '{"model":"mock-worker","messages":[{"role":"user","content":"hello"}]}'
-```

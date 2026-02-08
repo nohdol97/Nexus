@@ -1,6 +1,6 @@
-# MLflow Registry Scaffolding
+# MLflow 레지스트리 스캐폴딩
 
-This document outlines how model versions map to deployment.
+이 문서는 모델 버전이 배포 단계에 어떻게 연결되는지 정리합니다.
 
 ## 기본 흐름
 

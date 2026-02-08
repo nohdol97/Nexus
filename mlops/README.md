@@ -1,6 +1,6 @@
-# MLOps Scaffolding
+# MLOps 스캐폴딩
 
-This folder documents the planned ML pipeline and GitOps flow.
+이 폴더는 계획된 ML 파이프라인과 GitOps 흐름을 문서화합니다. 실제 운영 전에 단계별 산출물과 연동 지점을 정리하기 위한 가이드입니다.
 
 ## 목표 파이프라인 (요약)
 

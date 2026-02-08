@@ -1,30 +1,30 @@
-# Logging Pipeline (Kafka -> Elasticsearch -> Kibana)
+# 로깅 파이프라인 (Kafka -> Elasticsearch -> Kibana)
 
-This stack ships structured gateway logs through Kafka and indexes them into Elasticsearch for Kibana search.
+게이트웨이의 구조화 로그를 Kafka로 전달하고 Elasticsearch에 색인한 뒤 Kibana에서 검색/대시보드로 확인하는 스택입니다. 로컬 관측성 검증과 쿼리 템플릿 확인에 적합합니다.
 
-## Run
+## 실행
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.logging.yml up -d
 ```
 
-## Access
+## 접속
 
 - Kafka: localhost:9092
 - Elasticsearch: http://localhost:9200
 - Kibana: http://localhost:5601
 
-## Notes
+## 메모
 
-- Vector reads Docker logs from containers labeled `com.docker.compose.service=gateway`.
-- Logs flow: Vector (docker logs) -> Kafka topic `gateway-logs` -> Vector -> Elasticsearch.
-- Kibana uses the `gateway-logs-*` data view.
-- Create the data view automatically:
+- Vector는 `com.docker.compose.service=gateway` 라벨이 붙은 컨테이너의 Docker 로그를 읽습니다.
+- 로그 흐름: Vector (docker logs) -> Kafka 토픽 `gateway-logs` -> Vector -> Elasticsearch.
+- Kibana는 `gateway-logs-*` 데이터 뷰를 사용합니다.
+- 데이터 뷰 자동 생성:
   ```bash
   ./ops/logging/bootstrap_kibana.sh
   ```
-- Query templates: `ops/logging/kibana_queries.md`
-- Correlation guide: `ops/logging/correlation_guide.md`
-- Dashboard template: `ops/logging/kibana_dashboard.md`
-- Saved objects bootstrap: `ops/logging/kibana_saved_objects.md`
-- Log schema: `ops/logging/log_schema.md`
+- 쿼리 템플릿: `ops/logging/kibana_queries.md`
+- 상관관계 가이드: `ops/logging/correlation_guide.md`
+- 대시보드 템플릿: `ops/logging/kibana_dashboard.md`
+- Saved objects 부트스트랩: `ops/logging/kibana_saved_objects.md`
+- 로그 스키마: `ops/logging/log_schema.md`

@@ -1,30 +1,30 @@
-# KServe Scaffolding
+# KServe 스캐폴딩
 
-This folder provides a minimal InferenceService template for KServe.
+이 폴더는 KServe InferenceService 최소 템플릿을 제공합니다. KServe가 설치된 클러스터에서만 적용할 수 있습니다.
 
-## Apply (after KServe is installed)
+## 적용 (KServe 설치 후)
 
 ```bash
 kubectl apply -f k8s/kserve/inferenceservice.yaml
 ```
 
-## Notes
-- Replace the model ID, image, and resources for your GPU environment.
-- `model-worker-secrets` must include `HF_TOKEN` if the model is gated.
-- `MODEL_URI` should point to the MLflow registry version you want to deploy.
+## 참고
+- 모델 ID, 이미지, 리소스 요청/제한을 GPU 환경에 맞게 변경하세요.
+- 게이티드 모델이면 `model-worker-secrets`에 `HF_TOKEN`이 필요합니다.
+- `MODEL_URI`는 배포하려는 MLflow 레지스트리 버전을 가리켜야 합니다.
 
-## Installation (reference)
+## 설치 (참고)
 
-KServe must be installed before applying the InferenceService.
+InferenceService를 적용하기 전에 KServe가 설치되어 있어야 합니다.
 
 ```bash
-# Check KServe CRDs
+# KServe CRD 확인
 kubectl get crd | grep kserve
 ```
 
-If KServe is not installed, follow the official installation guide for your cluster.
-This repo does not include KServe install manifests.
+KServe가 없다면 클러스터에 맞는 공식 설치 가이드를 사용하세요.
+이 리포지토리에는 KServe 설치 매니페스트가 포함되어 있지 않습니다.
 
-## Checklist
+## 체크리스트
 
 - `k8s/kserve/checklist.md`
